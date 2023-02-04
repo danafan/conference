@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="flex fc height-100">
 		<el-card shadow="never">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="时间：">
@@ -21,11 +21,15 @@
 			</el-form>
 		</el-card>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
+		<div class="mt-10 scroll-y hide_scrollbar">
+			<ConferenceItem type="1" :info="item" v-for="item in list"/>
+		</div>
 	</div>
 </template>
 <script>
 	import { getNowDate } from '../../utils.js'
 	import PageTab from '../../components/pageTab.vue'
+	import ConferenceItem from '../../components/conferenceItem.vue'
 	export default{
 		data(){
 			return{
@@ -44,6 +48,17 @@
 					name:'全部',
 					id:'0'
 				}],						//导航列表
+				list:[{
+					id:"",
+					image:"",
+					name:"国泰16楼02会议室",
+					ty:true,
+					bb:true,
+					kt:true,
+					tv:true,
+					people:15,
+					position:"国泰科技大厦",
+				}],						//会议室列表
 			}
 		},
 		methods:{
@@ -62,7 +77,8 @@
 			}
 		},
 		components:{
-			PageTab
+			PageTab,
+			ConferenceItem
 		}
 	}
 </script>
