@@ -10,16 +10,32 @@
 			<!-- 可选择 -->
 			<div class="popconfirm absolute f14" v-if="start_index == index">
 				<div>{{popconfirm_value}}</div>
-				<div>(再次点击确认时段)</div>
+				<div v-if="frequency === 1">(再次点击确认时段)</div>
 				<div class="width-100 flex jfc mt-10">
 					<el-button size="mini" @click.stop="cancel">取消</el-button>
-					<el-button size="mini" type="primary" @click.stop="confirm">确定</el-button>
+					<el-button size="mini" type="primary" @click.stop="selectedTime">确定</el-button>
 				</div>
 			</div>
 		</div>
+		<!-- 确认会议室详情 -->
+		<c-dialog title="杭州德儿电子商务有限公司" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" confirmText="完成" @confirmFn="confirmFn" ref="CDialog">
+			<el-form size="small" label-width="100px">
+				<el-form-item label="会议标题：">
+					<el-input style="flex:1" v-model="title" placeholder="请添加会议标题">
+					</el-input>
+				</el-form-item>
+				<el-form-item label="会议级别：">
+					<el-select v-model="level_id">
+						<el-option v-for="item in level_list" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+		</c-dialog>
 	</div>
 </template>
 <script>
+	import CDialog from '../components/cDialog.vue'
 	export default{
 		data(){
 			return{
@@ -124,6 +140,26 @@
 				start_index:-1,						//第一次选中的下标
 				frequency:0,						//当前有效点击次数
 				popconfirm_value:"",				//选中时间的弹窗时间段
+				title:"",							//弹窗会议标题
+				level_list:[{
+					id:'1',
+					name:"大级别"
+				},{
+					id:'2',
+					name:"中级别"
+				},{
+					id:'3',
+					name:"小级别"
+				}],									//会议级别列表
+				level_id:'1',						//选中的会议级别列表
+
+			}
+		},
+		props:{
+			//当前会议室
+			info:{
+				type:Object,
+				default:{}
 			}
 		},
 		created(){
@@ -279,21 +315,19 @@
 				this.frequency = 0;						//当前有效点击次数
 				this.popconfirm_value = "";				//选中时间的弹窗时间段
 			},
-			//确定
-			confirm(){
-				this.start_index = -1;					//第一次选中的下标
-				let arr = this.list.filter(item => {
-					return item.is_selected;
-				})
-				this.list.map(item => {
-					item.is_hover = false;
-					item.is_selected = false;
-				})
-				this.frequency = 0;						//当前有效点击次数
-				this.popconfirm_value = "";				//选中时间的弹窗时间段
-				console.log(arr)
+			//选中确定
+			selectedTime(){
+				this.title = `${this.info.name}预定`;
+				this.$refs.CDialog.show_dialog = true;
+			},
+			//弹窗确定
+			confirmFn(){
+				this.$refs.CDialog.show_dialog = false;
 			}
 			
+		},
+		components:{
+			CDialog
 		}
 	}
 </script>

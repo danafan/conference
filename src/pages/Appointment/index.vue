@@ -1,6 +1,6 @@
 <template>
 	<div class="flex fc height-100">
-		<el-card shadow="never">
+		<el-card class="tab_card" shadow="never">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="时间：">
 					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions" @change="searchFn">

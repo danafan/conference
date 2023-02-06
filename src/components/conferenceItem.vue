@@ -20,7 +20,7 @@
 				</div>
 			</div>
 		</div>
-		<SelectTime/>
+		<SelectTime :info="info"/>
 	</el-card>
 </template>
 <script>
