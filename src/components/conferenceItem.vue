@@ -3,33 +3,27 @@
 		<div class="flex">
 			<DefaultImage :info="info"/>
 			<div class="flex fc jsb">
-				<div class="f20 fw-600">{{info.name}}</div>
-				<div class="flex">
-					<Equipment type="1" v-if="info.ty"/>
-					<Equipment type="2" v-if="info.bb"/>
-					<Equipment type="3" v-if="info.tv"/>
-					<Equipment type="4" v-if="info.kt"/>
-				</div>
+				<div class="f20 fw-600">{{info.meeting_room_name}}</div>
+				<div class="f16">{{info.equipment_str}}</div>
 				<div class="flex ac">
 					<img class="people_icon mr-6" src="../static/people_icon.png">
-					<div class="f26">{{info.people}}人</div>
+					<div class="f26">{{info.limit_num}}人</div>
 				</div>
 				<div class="flex ac">
 					<img class="position_icon mr-6" src="../static/position_icon.png">
-					<div class="f26">{{info.position}}</div>
+					<div class="f26">{{info.meeting_address}}</div>
 				</div>
 			</div>
 		</div>
-		<SelectTime :info="info"/>
+		<SelectTime :info="info" v-if="type == '1'"/>
 	</el-card>
 </template>
 <script>
 	import DefaultImage from '../components/defaultImage.vue'
-	import Equipment from '../components/equipment.vue'
 	import SelectTime from '../components/selectTime.vue'
 	export default{
 		props:{
-			//类型（1:预约会议）
+			//类型（1:预约会议;2:会议室管理列表）
 			type:{
 				type: String,
 				default:''
@@ -42,7 +36,6 @@
 		},
 		components:{
 			DefaultImage,
-			Equipment,
 			SelectTime
 		}
 	}

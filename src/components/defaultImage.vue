@@ -1,7 +1,8 @@
 <template>
 	<div class="box mr-16 flex ac jc">
-		<img class="default_icon" src="../static/default_icon.png" v-if="info.image == ''">
-		<img class="container" src="../static/default_icon.png" v-else>
+		<!-- <img class="default_icon" src="../static/default_icon.png" v-if="info.image == ''">
+		<img class="container" src="../static/default_icon.png" v-else> -->
+		<img class="default_icon" src="../static/default_icon.png">
 	</div>
 </template>
 <script>

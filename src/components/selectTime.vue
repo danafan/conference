@@ -30,6 +30,33 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
+				<el-form-item label="参会人员：">
+					<div class="people_box flex">
+						<div class="flex-1">
+							<el-button type="primary" plain icon="el-icon-plus">批量添加</el-button>
+							<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="index > 0" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
+								{{user.name}}
+							</el-tag>
+						</div>
+						<div class="f16 dark_color">{{selected_user.length}}人</div>
+					</div>
+				</el-form-item>
+				<el-form-item label="会议室：">
+					<el-select v-model="hys_id">
+						<el-option v-for="item in hys_list" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="会议描述：">
+					<el-input type="textarea" :rows="3" placeholder="添加会议描述" v-model="desc">
+					</el-input>
+				</el-form-item>
+				<el-form-item label="通知时间：">
+					<el-select v-model="time_id">
+						<el-option v-for="item in time_list" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
 			</el-form>
 		</c-dialog>
 	</div>
@@ -152,7 +179,48 @@
 					name:"小级别"
 				}],									//会议级别列表
 				level_id:'1',						//选中的会议级别列表
-
+				selected_user:[{
+					id:'1',
+					name:"大用户"
+				},{
+					id:'2',
+					name:"中用户"
+				},{
+					id:'3',
+					name:"小用户"
+				},{
+					id:'1',
+					name:"大用户"
+				},{
+					id:'2',
+					name:"中用户"
+				},{
+					id:'3',
+					name:"小用户"
+				}],					//选中的参会人员列表
+				hys_list:[{
+					id:'1',
+					name:"会议室1"
+				},{
+					id:'2',
+					name:"会议室2"
+				},{
+					id:'3',
+					name:"会议室3"
+				}],					//会议室列表
+				hys_id:"1",			//选中的会议室
+				desc:"",			//会议描述
+				time_list:[{
+					id:'1',
+					name:"时间1"
+				},{
+					id:'2',
+					name:"时间2"
+				},{
+					id:'3',
+					name:"时间3"
+				}],					//时间列表
+				time_id:"1",		//选中的时间
 			}
 		},
 		props:{
@@ -318,7 +386,18 @@
 			//选中确定
 			selectedTime(){
 				this.title = `${this.info.name}预定`;
+
+				//获取选中的会议时间
+				// let arr = this.list.filter(item => {
+				// 	return item.is_selected;
+				// })
+				// console.log(arr)
+
 				this.$refs.CDialog.show_dialog = true;
+			},
+			//关闭选中的人员
+			closeFn(index){
+				this.selected_user.splice(index,1);
 			},
 			//弹窗确定
 			confirmFn(){
@@ -382,6 +461,11 @@
 	}
 	.hover_background{
 		background-color: #C8DEF4;
+	}
+	.people_box{
+		padding:3px 5px 3px 3px;
+		border-radius: 4px;
+		border:1px solid #DCDFE6;
 	}
 }
 </style>

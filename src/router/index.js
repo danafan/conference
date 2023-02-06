@@ -4,6 +4,8 @@ import Router from "vue-router";
 const index = (resolve) => require(["@/pages/Index/index"], resolve);
 const appointment = (resolve) => require(["@/pages/Appointment/index"], resolve);
 const management = (resolve) => require(["@/pages/Management/index"], resolve);
+const list = (resolve) => require(["@/pages/Management/pages/list"], resolve);
+const add = (resolve) => require(["@/pages/Management/pages/add"], resolve);
 const record = (resolve) => require(["@/pages/Record/index"], resolve);
 const statistics = (resolve) => require(["@/pages/Statistics/index"], resolve);
 
@@ -24,7 +26,16 @@ const router = new Router({
     {
       path: "/management",
       name: "会议室管理",
-      component: management
+      component: management,
+      children:[{
+        path: "/list",
+        name: "会议室管理",
+        component: list
+      },{
+        path: "/add",
+        name: "添加会议室",
+        component: add
+      }]
     },
     {
       path: "/record",

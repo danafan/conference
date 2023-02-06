@@ -72,8 +72,8 @@
 				console.log(arg)
 			},
 			//切换导航
-			checkTab(id){
-				console.log(id)
+			checkTab(item){
+				console.log(item)
 			}
 		},
 		components:{

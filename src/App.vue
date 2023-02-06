@@ -6,6 +6,10 @@
 <script>
   export default {
     created() {
+      let domain = 'http://img.92nu.com/';
+      this.$store.commit('setDomain',domain);
+      localStorage.setItem("domain",domain);
+
       this.$router.replace('/index');
     },
     watch:{

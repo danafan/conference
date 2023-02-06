@@ -1,7 +1,7 @@
 <template>
 	<el-card shadow="never" class="tab_card mt-10">
 		<div class="flex">
-			<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(index,item.id)">
+			<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(item,index)">
 				<div class="f16 fw-500" :class="{'primary_color':active_index == index}">{{item.name}}</div>
 				<div class="active_line absolute bottom-0 width-100" v-if="active_index == index"></div>
 			</div>
@@ -29,9 +29,9 @@
 		},
 		methods:{
 			//切换tab
-			checkTab(index,id){
+			checkTab(item,index){
 				this.active_index = index;
-				this.$emit('checkTab',id)
+				this.$emit('checkTab',item)
 			}
 		}
 	}
