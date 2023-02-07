@@ -45,7 +45,7 @@
 					name:"会议统计",
 					path:'/statistics'
 				}],							//路由地址
-				active_index:1,				//当前选中的路由下标
+				active_index:0,				//当前选中的路由下标
 			}
 		},
 		created(){

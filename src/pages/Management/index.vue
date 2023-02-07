@@ -1,7 +1,7 @@
 <template>
 	<div class="flex fc height-100">
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
-		<div class="mt-10 flex-1 pt-14 pl-20 pb-14 pr-20 scroll-y hide_scrollbar">
+		<div class="mt-10 flex-1 pt-14 pb-14 scroll-y hide_scrollbar">
 			<router-view></router-view>
 		</div>
 	</div>

@@ -3,19 +3,15 @@
 		<el-card class="tab_card" shadow="never">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="时间：">
-					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions" @change="searchFn">
+					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions" @change="meetingList">
 					</el-date-picker>
 				</el-form-item>
 				<el-form-item label="搜索：">
-					<el-input v-model="search" clearable placeholder="搜索会议室" @change="searchFn"></el-input>
+					<el-input v-model="search" clearable placeholder="搜索会议室" @change="meetingList"></el-input>
 				</el-form-item>
 				<el-form-item label="按设备筛选：">
-					<el-checkbox-group v-model="equipment" @change="searchFn">
-						<el-checkbox label="1">电视</el-checkbox>
-						<el-checkbox label="2">电话</el-checkbox>
-						<el-checkbox label="3">投影</el-checkbox>
-						<el-checkbox label="4">白板</el-checkbox>
-						<el-checkbox label="5">视频</el-checkbox>
+					<el-checkbox-group v-model="equipment" @change="meetingList">
+						<el-checkbox :label="item.equipment_id" v-for="item in equipment_list">{{item.equipment_name}}</el-checkbox>
 					</el-checkbox-group>
 				</el-form-item>
 			</el-form>
@@ -30,6 +26,8 @@
 	import { getNowDate } from '../../utils.js'
 	import PageTab from '../../components/pageTab.vue'
 	import ConferenceItem from '../../components/conferenceItem.vue'
+
+	import resource from '../../api/resource.js'
 	export default{
 		data(){
 			return{
@@ -40,6 +38,7 @@
 					}
 				},
 				search:"",				//搜索会议室
+				equipment_list:[],		//所有设备列表
 				equipment:[],			//选中的设备列表
 				tab_list:[{
 					name:'可预定',
@@ -48,32 +47,52 @@
 					name:'全部',
 					id:'0'
 				}],						//导航列表
-				list:[{
-					id:"",
-					image:"",
-					name:"国泰16楼02会议室",
-					ty:true,
-					bb:true,
-					kt:true,
-					tv:true,
-					people:15,
-					position:"国泰科技大厦",
-				}],						//会议室列表
+				flag:"1",				//当前选中的导航
+				list:[],				//会议室列表
 			}
 		},
+		created(){
+			//获取设备列表
+			this.ajaxEquipment();
+			//获取会议室列表
+			this.meetingList();
+		},
 		methods:{
-			//搜索
-			searchFn(){
-				let arg = {
-					date:this.date,
-					search:this.search,
-					equipment:this.equipment
-				}
-				console.log(arg)
+			//获取设备列表
+			ajaxEquipment(){
+				resource.ajaxEquipment().then(res => {
+					if(res.data.code == 1){
+						this.equipment_list = res.data.data;
+					}else{
+						this.$message.warning(res.data.msg);
+					}
+				})
 			},
 			//切换导航
 			checkTab(item){
-				console.log(item)
+				this.flag = item.id;
+				//获取会议室列表
+				this.meetingList();
+			},
+			//获取会议室列表
+			meetingList(){
+				let arg = {
+					flag:this.flag,
+					day:this.date,
+					equipment_id:this.equipment.join(','),
+					search:this.search
+				}
+				resource.meetingList(arg).then(res => {
+					if(res.data.code == 1){
+						let list = res.data.data;
+						list.map(item => {
+							item['equipment_str'] = item.equipment_name.join(' / ');
+						})
+						this.list = list;
+					}else{
+						this.$message.warning(res.data.msg);
+					}
+				})
 			}
 		},
 		components:{

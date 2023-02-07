@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<ConferenceItem type="2" :info="item" v-for="item in list"/>
+		<ConferenceItem type="2" :info="item" v-for="item in list" @reload="meetingRoomList"/>
 	</div>
 </template>
 <script>

@@ -25,44 +25,68 @@
 					</el-input>
 				</el-form-item>
 				<el-form-item label="会议级别：">
-					<el-select v-model="level_id">
-						<el-option v-for="item in level_list" :label="item.name" :value="item.id">
+					<el-select v-model="meeting_level">
+						<el-option v-for="item in meeting_level_list" :label="item.meeting_level_name" :value="item.meeting_level_id">
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="参会人员：">
-					<div class="people_box flex">
-						<div class="flex-1">
-							<el-button type="primary" plain icon="el-icon-plus">批量添加</el-button>
-							<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="index > 0" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
-								{{user.name}}
-							</el-tag>
-						</div>
-						<div class="f16 dark_color">{{selected_user.length}}人</div>
-					</div>
+				<el-form-item label="会议日期：">
+					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions">
+					</el-date-picker>
 				</el-form-item>
-				<el-form-item label="会议室：">
-					<el-select v-model="hys_id">
-						<el-option v-for="item in hys_list" :label="item.name" :value="item.id">
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="会议描述：">
-					<el-input type="textarea" :rows="3" placeholder="添加会议描述" v-model="desc">
-					</el-input>
-				</el-form-item>
-				<el-form-item label="通知时间：">
-					<el-select v-model="time_id">
-						<el-option v-for="item in time_list" :label="item.name" :value="item.id">
-						</el-option>
-					</el-select>
-				</el-form-item>
-			</el-form>
-		</c-dialog>
-	</div>
+				<el-form-item label="会议时间：">
+					<el-time-select placeholder="起始时间" v-model="startTime"
+					:picker-options="{
+						start: '07:00',
+						step: '00:30',
+						end: '23:00'
+					}">
+				</el-time-select>
+				<el-time-select
+				placeholder="结束时间"
+				v-model="endTime"
+				:picker-options="{
+					start: '07:00',
+					step: '00:30',
+					end: '23:00',
+					minTime: startTime
+				}">
+			</el-time-select>
+		</el-form-item>
+		<el-form-item label="参会人员：">
+			<div class="people_box flex">
+				<div class="flex-1">
+					<el-button type="primary" plain icon="el-icon-plus">批量添加</el-button>
+					<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="index > 0" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
+						{{user.name}}
+					</el-tag>
+				</div>
+				<div class="f16 dark_color">{{selected_user.length}}人</div>
+			</div>
+		</el-form-item>
+		<el-form-item label="会议室：">
+			<el-select v-model="meeting_room_ids" clearable multiple filterable>
+				<el-option v-for="item in meeting_room" :label="item.meeting_room_name" :value="item.meeting_room_id">
+				</el-option>
+			</el-select>
+		</el-form-item>
+		<el-form-item label="会议描述：">
+			<el-input type="textarea" :rows="3" placeholder="添加会议描述" v-model="remark">
+			</el-input>
+		</el-form-item>
+		<el-form-item label="通知时间：">
+			<el-select v-model="notice_type">
+				<el-option v-for="item in notice_type_list" :label="item.name" :value="item.id">
+				</el-option>
+			</el-select>
+		</el-form-item>
+	</el-form>
+</c-dialog>
+</div>
 </template>
 <script>
 	import CDialog from '../components/cDialog.vue'
+	import resource from '../api/resource.js'
 	export default{
 		data(){
 			return{
@@ -168,17 +192,8 @@
 				frequency:0,						//当前有效点击次数
 				popconfirm_value:"",				//选中时间的弹窗时间段
 				title:"",							//弹窗会议标题
-				level_list:[{
-					id:'1',
-					name:"大级别"
-				},{
-					id:'2',
-					name:"中级别"
-				},{
-					id:'3',
-					name:"小级别"
-				}],									//会议级别列表
-				level_id:'1',						//选中的会议级别列表
+				meeting_level_list:[],				//会议级别列表
+				meeting_level:'',					//选中的会议级别
 				selected_user:[{
 					id:'1',
 					name:"大用户"
@@ -198,29 +213,20 @@
 					id:'3',
 					name:"小用户"
 				}],					//选中的参会人员列表
-				hys_list:[{
-					id:'1',
-					name:"会议室1"
-				},{
-					id:'2',
-					name:"会议室2"
-				},{
-					id:'3',
-					name:"会议室3"
-				}],					//会议室列表
-				hys_id:"1",			//选中的会议室
-				desc:"",			//会议描述
-				time_list:[{
-					id:'1',
-					name:"时间1"
-				},{
-					id:'2',
-					name:"时间2"
-				},{
-					id:'3',
-					name:"时间3"
-				}],					//时间列表
-				time_id:"1",		//选中的时间
+				meeting_room:[],	//会议室列表
+				meeting_room_ids:[],//选中的会议室
+				remark:"",			//会议描述
+				notice_type_list:[],//时间列表
+				notice_type:"",		//选中的提前通知时间
+				date:"",			//会议日期
+				pickerOptions: {
+					disabledDate(date) {
+						return date.getTime() < Date.now() - 8.64e7;
+					}
+				},					
+				startTime:"",		//会议时间
+				endTime:"",
+				
 			}
 		},
 		props:{
@@ -235,6 +241,51 @@
 			this.filterTime();
 		},
 		methods:{
+			//设置默认状态
+			filterTime(){
+				this.list.map((item,index) => {
+					let start_time = item.interval.split('~')[0];
+					let end_time = item.interval.split('~')[1];
+					let arg = this.getStatus(start_time,end_time);
+					item['is_selected'] = false;
+					item['is_hover'] = false;
+					for(let k in arg){
+						item[k] = arg[k];
+					}
+					// if(index == 26){
+					// 	item['disable'] = true;
+					// 	item['user_name'] = '彪子';
+					// }
+				})
+			},
+			//处理每一格的时间
+			getStatus(start_time,end_time){
+				var now = new Date(); 				//当前日期  
+				var nowYear = now.getYear(); 		//当前年 
+				nowYear += (nowYear < 2000) ? 1900 : 0;
+				var nowMonth = now.getMonth(); 		//当前月 
+				var nowDay = now.getDate(); 		//当前日 
+				var nowHours = now.getHours();  	//当前小时
+				var nowMinutes = now.getMinutes();  //当前分钟
+				var Seconds = now.getSeconds();     //当前秒
+
+				//当前时间
+				let current_time = `${nowYear}-${nowMonth+1}-${nowDay} ${nowHours}:${nowMinutes}:${Seconds}`;
+				//指定的开始时间
+				let set_start_time = `${nowYear}-${nowMonth+1}-${nowDay} ${start_time}:00`;
+				//指定的结束时间
+				let set_end_time = `${nowYear}-${nowMonth+1}-${nowDay} ${end_time}:00`;
+
+				//当前时间是否超出指定的结束时间
+				let is_exceed = new Date(current_time).getTime() > new Date(set_end_time).getTime();
+
+				let arg = {
+					is_exceed:is_exceed,				//是否过期
+					arg_start_time:set_start_time,		//开始时间
+					arg_end_time:set_end_time			//结束时间
+				}
+				return arg;
+			},
 			//控制是否显示悬浮提示
 			changeShow(item,index,type){
 				if(item.is_exceed || item.disable){		//已过期或被预定
@@ -327,52 +378,7 @@
 					e_index:e_index
 				}
 				return arg;
-			},	
-			//设置默认状态
-			filterTime(){
-				this.list.map((item,index) => {
-					let start_time = item.interval.split('~')[0];
-					let end_time = item.interval.split('~')[1];
-					let arg = this.getStatus(start_time,end_time);
-					item['is_selected'] = false;
-					item['is_hover'] = false;
-					for(let k in arg){
-						item[k] = arg[k];
-					}
-					if(index == 26){
-						item['disable'] = true;
-						item['user_name'] = '彪子';
-					}
-				})
-			},
-			//处理每一格的时间
-			getStatus(start_time,end_time){
-				var now = new Date(); 				//当前日期  
-				var nowYear = now.getYear(); 		//当前年 
-				nowYear += (nowYear < 2000) ? 1900 : 0;
-				var nowMonth = now.getMonth(); 		//当前月 
-				var nowDay = now.getDate(); 		//当前日 
-				var nowHours = now.getHours();  	//当前小时
-				var nowMinutes = now.getMinutes();  //当前分钟
-				var Seconds = now.getSeconds();     //当前秒
-
-				//当前时间
-				let current_time = `${nowYear}-${nowMonth+1}-${nowDay} ${nowHours}:${nowMinutes}:${Seconds}`;
-				//指定的开始时间
-				let set_start_time = `${nowYear}-${nowMonth+1}-${nowDay} ${start_time}:00`;
-				//指定的结束时间
-				let set_end_time = `${nowYear}-${nowMonth+1}-${nowDay} ${end_time}:00`;
-
-				//当前时间是否超出指定的结束时间
-				let is_exceed = new Date(current_time).getTime() > new Date(set_end_time).getTime();
-
-				let arg = {
-					is_exceed:is_exceed,
-					arg_start_time:set_start_time,
-					arg_end_time:set_end_time
-				}
-				return arg;
-			},
+			},		
 			//取消
 			cancel(){
 				this.start_index = -1;					//第一次选中的下标
@@ -385,7 +391,23 @@
 			},
 			//选中确定
 			selectedTime(){
-				this.title = `${this.info.name}预定`;
+				this.title = `${this.info.meeting_room_name}预定`;
+				resource.addMeetingGet().then(res => {
+					if(res.data.code == 1){
+						this.meeting_level_list = res.data.data.meeting_level;
+						this.meeting_room = res.data.data.meeting_room;
+						this.meeting_room_ids = [];
+						this.meeting_room_ids.push(this.info.meeting_room_id);
+						this.notice_type_list = res.data.data.notice_type;
+						let default_arr = this.notice_type_list.filter(item => {
+							return item.default == 1;
+						})
+						this.notice_type = default_arr[0].id;
+					}else{
+						this.$message.warning(res.data.msg);
+					}
+				})
+				
 
 				//获取选中的会议时间
 				// let arr = this.list.filter(item => {

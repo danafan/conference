@@ -6,7 +6,7 @@
 				</el-input>
 			</el-form-item>
 			<el-form-item label="会议室头像：" required>
-				<UploadImage @callbackFn="callbackFn"/>
+				<UploadImage @callbackFn="callbackFn" :img_list="img_list" v-if="!isEdit || is_show"/>
 			</el-form-item>
 			<el-form-item label="容纳人数：" required>
 				<el-input-number v-model="limit_num" @blur="chageNum" :precision="0" :min="1"></el-input-number>
@@ -24,7 +24,6 @@
 							</div>
 						</el-option>
 					</div>
-					
 				</el-select>
 			</el-form-item>
 			<el-form-item label="会议室地点：" required>
@@ -35,7 +34,7 @@
 				<el-input type="textarea" :rows="3" placeholder="请输入备注" v-model="remark">
 				</el-input>
 			</el-form-item>
-			<el-form-item>
+			<el-form-item v-if="!isEdit">
 				<el-button type="primary" @click="confirmFn">保存</el-button>
 			</el-form-item>
 		</el-form>
@@ -50,12 +49,26 @@
 			return{
 				meeting_room_name:"",			//会议室名称
 				meeting_image:"",				//会议室图片
+				img_list:[],					//会议室图片（组件传递）
+				is_show:false,
 				limit_num:1,					//容纳人数
 				equipment_list:[],				//设备列表
-				selected_equipment:[],				//选中的设备
+				selected_equipment:[],			//选中的设备
 				equipment_name:"",				//输入的设备名称（添加）
 				meeting_address:"",				//会议室地点
 				remark:"",						//备注
+			}
+		},
+		props:{
+			//是否是编辑
+			isEdit:{
+				type:Boolean,
+				default:false
+			},
+			//获取的详情
+			info:{
+				type:Object,
+				default:() => {}
 			}
 		},
 		created(){
@@ -77,6 +90,23 @@
 				resource.ajaxEquipment().then(res => {
 					if(res.data.code == 1){
 						let equipment_list = res.data.data;
+						
+						//处理编辑详情
+						if(this.isEdit){
+							this.meeting_room_name = this.info.meeting_room_name;
+							this.meeting_image = this.info.meeting_image;
+							this.img_list = [];
+							let arg = {
+								urls:this.meeting_image,
+								show_icon:false
+							}
+							this.img_list.push(arg);
+							this.is_show = true;
+							this.limit_num = this.info.limit_num;
+							this.selected_equipment = this.info.meeting_equipment;
+							this.meeting_address = this.info.meeting_address;
+							this.remark = this.info.remark;
+						}
 						equipment_list.map(item => {
 							let selected_equipment = this.selected_equipment.filter(i => {
 								return item.equipment_id == i;
