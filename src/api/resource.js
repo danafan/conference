@@ -21,6 +21,10 @@ export default {
   addMeetingGet(params){
   	return http.get(path.addMeeting, params);
   },
+  //预约会议（预约）
+  addMeetingPost(params){
+  	return http.post(path.addMeeting, params);
+  },
   //会议室列表（会议室管理）
   meetingRoomList(params) {
   	return http.get(path.meetingRoomList, params);

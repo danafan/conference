@@ -55,7 +55,7 @@
 			//获取设备列表
 			this.ajaxEquipment();
 			//获取会议室列表
-			this.meetingList();
+			// this.meetingList();
 		},
 		methods:{
 			//获取设备列表
@@ -72,7 +72,7 @@
 			checkTab(item){
 				this.flag = item.id;
 				//获取会议室列表
-				this.meetingList();
+				// this.meetingList();
 			},
 			//获取会议室列表
 			meetingList(){
@@ -82,13 +82,14 @@
 					equipment_id:this.equipment.join(','),
 					search:this.search
 				}
+
 				resource.meetingList(arg).then(res => {
 					if(res.data.code == 1){
-						let list = res.data.data;
-						list.map(item => {
-							item['equipment_str'] = item.equipment_name.join(' / ');
-						})
-						this.list = list;
+						// let list = res.data.data;
+						// list.map(item => {
+						// 	item['equipment_str'] = item.equipment_name.join(' / ');
+						// })
+						// this.list = list;
 					}else{
 						this.$message.warning(res.data.msg);
 					}

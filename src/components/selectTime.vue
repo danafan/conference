@@ -19,12 +19,12 @@
 		</div>
 		<!-- 确认会议室详情 -->
 		<c-dialog title="杭州德儿电子商务有限公司" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" confirmText="完成" @confirmFn="confirmFn" ref="CDialog">
-			<el-form size="small" label-width="100px">
+			<el-form size="small" label-width="100px" required>
 				<el-form-item label="会议标题：">
-					<el-input style="flex:1" v-model="title" placeholder="请添加会议标题">
+					<el-input style="flex:1" v-model="meeting_title" placeholder="请添加会议标题">
 					</el-input>
 				</el-form-item>
-				<el-form-item label="会议级别：">
+				<el-form-item label="会议级别：" required>
 					<el-select v-model="meeting_level">
 						<el-option v-for="item in meeting_level_list" :label="item.meeting_level_name" :value="item.meeting_level_id">
 						</el-option>
@@ -35,25 +35,32 @@
 					</el-date-picker>
 				</el-form-item>
 				<el-form-item label="会议时间：">
-					<el-time-select placeholder="起始时间" v-model="startTime"
+					<div class="flex ac">
+						<el-time-select placeholder="起始时间"
+						v-model="startTime"
+						:clearable="false"
+						:picker-options="{
+							start: '07:00',
+							step: '00:30',
+							end: '23:00',
+							minTime:startMinTime
+						}">
+					</el-time-select>
+					-
+					<el-time-select
+					placeholder="结束时间"
+					v-model="endTime"
+					:clearable="false"
 					:picker-options="{
 						start: '07:00',
 						step: '00:30',
-						end: '23:00'
+						end: '23:00',
+						minTime: startTime
 					}">
 				</el-time-select>
-				<el-time-select
-				placeholder="结束时间"
-				v-model="endTime"
-				:picker-options="{
-					start: '07:00',
-					step: '00:30',
-					end: '23:00',
-					minTime: startTime
-				}">
-			</el-time-select>
+			</div>
 		</el-form-item>
-		<el-form-item label="参会人员：">
+		<!-- <el-form-item label="参会人员：">
 			<div class="people_box flex">
 				<div class="flex-1">
 					<el-button type="primary" plain icon="el-icon-plus">批量添加</el-button>
@@ -63,9 +70,9 @@
 				</div>
 				<div class="f16 dark_color">{{selected_user.length}}人</div>
 			</div>
-		</el-form-item>
+		</el-form-item> -->
 		<el-form-item label="会议室：">
-			<el-select v-model="meeting_room_ids" clearable multiple filterable>
+			<el-select v-model="meeting_room_ids" multiple filterable>
 				<el-option v-for="item in meeting_room" :label="item.meeting_room_name" :value="item.meeting_room_id">
 				</el-option>
 			</el-select>
@@ -191,28 +198,10 @@
 				start_index:-1,						//第一次选中的下标
 				frequency:0,						//当前有效点击次数
 				popconfirm_value:"",				//选中时间的弹窗时间段
-				title:"",							//弹窗会议标题
+				meeting_title:"",					//会议标题
 				meeting_level_list:[],				//会议级别列表
 				meeting_level:'',					//选中的会议级别
-				selected_user:[{
-					id:'1',
-					name:"大用户"
-				},{
-					id:'2',
-					name:"中用户"
-				},{
-					id:'3',
-					name:"小用户"
-				},{
-					id:'1',
-					name:"大用户"
-				},{
-					id:'2',
-					name:"中用户"
-				},{
-					id:'3',
-					name:"小用户"
-				}],					//选中的参会人员列表
+				selected_user:['8318','16161349938228000'],	//选中的参会人员列表
 				meeting_room:[],	//会议室列表
 				meeting_room_ids:[],//选中的会议室
 				remark:"",			//会议描述
@@ -225,6 +214,7 @@
 					}
 				},					
 				startTime:"",		//会议时间
+				startMinTime:"",	//开始时间最小时间
 				endTime:"",
 				
 			}
@@ -391,7 +381,7 @@
 			},
 			//选中确定
 			selectedTime(){
-				this.title = `${this.info.meeting_room_name}预定`;
+				this.meeting_title = `【${this.info.meeting_room_name}】预定`;
 				resource.addMeetingGet().then(res => {
 					if(res.data.code == 1){
 						this.meeting_level_list = res.data.data.meeting_level;
@@ -403,19 +393,24 @@
 							return item.default == 1;
 						})
 						this.notice_type = default_arr[0].id;
+						//获取选中的会议时间
+						let arr = this.list.filter(item => {
+							return item.is_selected;
+						})
+						this.date = arr[0].arg_start_time.split(' ')[0];
+
+						this.startTime = arr[0].interval.split('~')[0];
+						this.endTime = arr[arr.length - 1].interval.split('~')[1];
+
+						let exceed_list = this.list.filter(item => {
+							return item.is_exceed;
+						})
+						this.startMinTime = exceed_list[exceed_list.length - 1].interval.split('~')[1];
+						this.$refs.CDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
 				})
-				
-
-				//获取选中的会议时间
-				// let arr = this.list.filter(item => {
-				// 	return item.is_selected;
-				// })
-				// console.log(arr)
-
-				this.$refs.CDialog.show_dialog = true;
 			},
 			//关闭选中的人员
 			closeFn(index){
@@ -423,7 +418,32 @@
 			},
 			//弹窗确定
 			confirmFn(){
-				this.$refs.CDialog.show_dialog = false;
+				if(this.meeting_title == ''){
+					this.$message.warning('请输入会议标题！');
+				}else if(this.meeting_level == ''){
+					this.$message.warning('请选择会议级别！');
+				}else{
+					let arg = {
+						meeting_title:this.meeting_title,
+						meeting_room_ids:this.meeting_room_ids.join(','),
+						start_time:`${this.date} ${this.startTime}:00`,
+						end_time:`${this.date} ${this.endTime}:00`,
+						notice_type:this.notice_type,
+						meeting_level:this.meeting_level,
+						remark:this.remark,
+						user_ids:this.selected_user.join(',')
+					}
+					// resource.addMeetingPost(arg).then(res => {
+					// 	if(res.data.code == 1){
+					// 		this.$message.success(res.data.msg);
+					// 		this.$refs.CDialog.show_dialog = false;
+					// 		this.$emit('reloadFn');
+					// 	}else{
+					// 		this.$message.warning(res.data.msg);
+					// 	}
+					// })
+				}
+				
 			}
 			
 		},

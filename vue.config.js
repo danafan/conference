@@ -8,10 +8,10 @@ module.exports = {
 			'/api': {
 				target: 'http://meetingtest.92nu.com',
 				ws: true,
-				changOlrigin: true,		
+				changOlrigin: true
 			}
 		},
-		host:"0.0.0.0",  
+		host:"127.0.0.1",  
 	},
 	// assetsDir: "clothes",
 	// publicPath:'../',

@@ -21,7 +21,7 @@
 					<el-button type="text" @click="updateFn(0,'删除')">删除</el-button>
 				</div>
 			</div>
-			<SelectTime :info="info" v-if="type == '1'"/>
+			<SelectTime :info="info" v-if="type == '1'" @reloadFn="$emit('reload')"/>
 		</el-card>
 		<!-- 编辑 -->
 		<c-dialog title="编辑会议室" @cancleFn="$refs.CDialog.show_dialog = false" @confirmFn="confirmFn" ref="CDialog">
