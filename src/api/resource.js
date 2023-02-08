@@ -11,6 +11,10 @@ let path = {
   addMettingRoom:'meeting_room/add',					  //创建会议室
   editMettingRoom:'meeting_room/edit',					  //查看/编辑会议室
   updateMettingRoom:'meeting_room/update',				  //启用/禁用/删除
+  ajaxDeptLevel:'meeting/ajax_dept_level',          //获取部门列表和会议级别
+  meetingRecord:'meeting/record',                   //获取会议记录列表
+  meetingCancle:'meeting/cancle',                   //取消日程
+  meetingDetail:'meeting/detail',                   //获取会议详情
 } 
 export default {
   //会议室列表（预约会议室）
@@ -64,5 +68,21 @@ export default {
   //启用/禁用/删除
   updateMettingRoom(params) {
   	return http.post(path.updateMettingRoom, params);
+  },
+  //获取部门列表和会议级别
+  ajaxDeptLevel(params) {
+    return http.get(path.ajaxDeptLevel, params);
+  },
+  //获取会议记录列表
+  meetingRecord(params) {
+    return http.get(path.meetingRecord, params);
+  },
+  //取消日程
+  meetingCancle(params) {
+    return http.post(path.meetingCancle, params);
+  },
+  //获取会议详情
+  meetingDetail(params) {
+    return http.get(path.meetingDetail, params);
   },
 };

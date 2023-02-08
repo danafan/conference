@@ -433,15 +433,15 @@
 						remark:this.remark,
 						user_ids:this.selected_user.join(',')
 					}
-					// resource.addMeetingPost(arg).then(res => {
-					// 	if(res.data.code == 1){
-					// 		this.$message.success(res.data.msg);
-					// 		this.$refs.CDialog.show_dialog = false;
-					// 		this.$emit('reloadFn');
-					// 	}else{
-					// 		this.$message.warning(res.data.msg);
-					// 	}
-					// })
+					resource.addMeetingPost(arg).then(res => {
+						if(res.data.code == 1){
+							this.$message.success(res.data.msg);
+							this.$refs.CDialog.show_dialog = false;
+							this.$emit('reloadFn');
+						}else{
+							this.$message.warning(res.data.msg);
+						}
+					})
 				}
 				
 			}
