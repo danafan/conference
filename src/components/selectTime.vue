@@ -60,17 +60,17 @@
 				</el-time-select>
 			</div>
 		</el-form-item>
-		<!-- <el-form-item label="参会人员：">
+		<el-form-item label="参会人员：">
 			<div class="people_box flex">
 				<div class="flex-1">
-					<el-button type="primary" plain icon="el-icon-plus">批量添加</el-button>
+					<el-button type="primary" plain icon="el-icon-plus" @click="checkUser">批量添加</el-button>
 					<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="index > 0" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
 						{{user.name}}
 					</el-tag>
 				</div>
 				<div class="f16 dark_color">{{selected_user.length}}人</div>
 			</div>
-		</el-form-item> -->
+		</el-form-item>
 		<el-form-item label="会议室：">
 			<el-select v-model="meeting_room_ids" multiple filterable>
 				<el-option v-for="item in meeting_room" :label="item.meeting_room_name" :value="item.meeting_room_id">
@@ -92,6 +92,8 @@
 </div>
 </template>
 <script>
+	import * as dd from 'dingtalk-jsapi';
+
 	import CDialog from '../components/cDialog.vue'
 	import resource from '../api/resource.js'
 	export default{
@@ -201,7 +203,7 @@
 				meeting_title:"",					//会议标题
 				meeting_level_list:[],				//会议级别列表
 				meeting_level:'',					//选中的会议级别
-				selected_user:['8318','16161349938228000'],	//选中的参会人员列表
+				selected_user:[],					//选中的参会人员列表
 				meeting_room:[],	//会议室列表
 				meeting_room_ids:[],//选中的会议室
 				remark:"",			//会议描述
@@ -412,6 +414,40 @@
 					}
 				})
 			},
+			//点击批量选择参会人员
+			checkUser(){
+				dd.ready(() => {
+					dd.biz.contact.complexPicker({
+				    title:"选择参会人员",            	//标题
+				    corpId:"ding7828fff434921f5b",  //企业的corpId
+				    multiple:true,            		//是否多选
+				    limitTips:"超出了",          		//超过限定人数返回提示
+				    maxUsers:1000,            		//最大可选人数
+				    pickedUsers:[],            		//已选用户
+				    pickedDepartments:[],          	//已选部门
+				    disabledUsers:[],            	//不可选用户
+				    disabledDepartments:[],        	//不可选部门
+				    requiredUsers:[],            	//必选用户（不可取消选中状态）
+				    requiredDepartments:[],        	//必选部门（不可取消选中状态）
+				    appId:2398948762,              	//微应用Id，企业内部应用查看AgentId
+				    permissionType:"GLOBAL",          
+				    responseUserOnly:true,         //返回人，或者返回人和部门
+				    startWithDepartmentId:0 ,   	//仅支持0和-1
+				    onSuccess: (result) => {
+				    	alert(JSON.stringify(result));
+				    	this.selected_user = result.users;
+				        /**
+				        {
+				            selectedCount:1,                              //选择人数
+				            users:[{"name":"","avatar":"","emplId ":""}]，//返回选人的列表，列表中的对象包含name（用户名），avatar（用户头像），emplId（用户工号）三个字段
+				            departments:[{"id":,"name":"","number":}]//返回已选部门列表，列表中每个对象包含id（部门id）、name（部门名称）、number（部门人数）
+				        }
+				        */
+				    },
+				    onFail : function(err) {}
+				});
+				})
+			},
 			//关闭选中的人员
 			closeFn(index){
 				this.selected_user.splice(index,1);
@@ -431,8 +467,11 @@
 						notice_type:this.notice_type,
 						meeting_level:this.meeting_level,
 						remark:this.remark,
-						user_ids:this.selected_user.join(',')
 					}
+					let user_ids = this.selected_user.map(item => {
+						return item.emplId
+					})
+					arg['user_ids'] = user_ids.join(',');
 					resource.addMeetingPost(arg).then(res => {
 						if(res.data.code == 1){
 							this.$message.success(res.data.msg);
@@ -443,7 +482,6 @@
 						}
 					})
 				}
-				
 			}
 			
 		},

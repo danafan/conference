@@ -53,9 +53,9 @@
 		},
 		created(){
 			//获取设备列表
-			this.ajaxEquipment();
+			// this.ajaxEquipment();
 			//获取会议室列表
-			this.meetingList();
+			// this.meetingList();
 		},
 		methods:{
 			//获取设备列表

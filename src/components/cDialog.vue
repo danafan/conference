@@ -1,5 +1,5 @@
 <template>
-	<el-dialog width="50%" :visible.sync="show_dialog" @close="closeDialog">
+	<el-dialog :width="width" :close-on-click-modal="false" :append-to-body="append" :visible.sync="show_dialog" @close="closeDialog">
 		<div slot="title" class="dialog_title">
 			<div>{{title}}</div>
 			<img class="close_icon" src="../static/close_icon.png" @click="show_dialog = false">
@@ -19,10 +19,19 @@
 			}
 		},
 		props:{
+			append:{
+				type:Boolean,
+				default:false
+			},
 			//标题
 			title:{
 				type:String,
 				default:""
+			},
+			//弹窗宽度
+			width:{
+				type:String,
+				default:"65%"
 			},
 			//弹窗脚部是否显示
 			footer:{

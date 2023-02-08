@@ -15,6 +15,8 @@ let path = {
   meetingRecord:'meeting/record',                   //获取会议记录列表
   meetingCancle:'meeting/cancle',                   //取消日程
   meetingDetail:'meeting/detail',                   //获取会议详情
+  updateMinutes:'meeting/update_minutes',            //更新会议纪要
+  statisticsList:'statistics/list',                  //会议统计
 } 
 export default {
   //会议室列表（预约会议室）
@@ -84,5 +86,13 @@ export default {
   //获取会议详情
   meetingDetail(params) {
     return http.get(path.meetingDetail, params);
+  },
+  //更新会议纪要
+  updateMinutes(params) {
+    return http.post(path.updateMinutes, params);
+  },
+  //会议统计
+  statisticsList(params) {
+    return http.get(path.statisticsList, params);
   },
 };

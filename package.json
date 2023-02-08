@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "core-js": "^2.6.5",
+    "dingtalk-jsapi": "^3.0.12",
     "element-ui": "^2.15.12",
     "less": "^4.1.0",
     "less-loader": "^7.2.1",
