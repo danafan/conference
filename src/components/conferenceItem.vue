@@ -112,22 +112,20 @@
 			</c-dialog>
 		</c-dialog>
 		<!-- 签到 -->
-		<c-dialog class="sign_dialog" width="540px" title="签到" :footer="false" ref="sDialog">
+		<c-dialog class="sign_dialog" width="540px" title="签到" :footer="false" ref="sDialog" @closeDialog="closeSignDialog">
 			<div class="sign_box flex f16">
 				<!-- 左侧 -->
 				<div class="height-100 left_box flex fc">
-					<div class="qrcode">
-						<!-- "data:image/png;base64,data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQMAAACyIsh+AAAABlBMVEUAAAD///+l2Z/dAAAACXBI\r\nWXMAAA7EAAAOxAGVKw4bAAABO0lEQVRoge3YQRKDMAgFUGY8gEfK1XMkD+AMVT6Q1I2k3X4WdqJv\r\nRTFgRDw2xaUd169dHkHwBprecTjQfl/upQXBCkBuPcvXM7tE5gl+AbKfcqWa4F/gMTzBIsjXv+mJ\r\n5fAEC8Bj09gDoi89guAF6Ii+K/I93yOogmv7VO/rOj3zLdWCoARsacomJNxsakkf/wXBO8AiU43s\r\n9lAECwA9fD9lHjitfI/IPEEF4KsnP32ifIVgFWAjzQkJleuvv++mBCWAKu1T0r1yMXUSLIBs6V18\r\n1vSN1KuaoAa8aOPDHOUrADJVNcEb0Iz5I0ij4ROUQYS1JJGJ5tkRQQ00u4dXPTp8C0WwAsZRcJYv\r\nwgcmglUQFfzVl4TgB4BZ8wgQ5xwEVTC9/oLmbsucRAmKQLJUrQfZs/soE/O7EBTBB20DDtTUwwr9\r\nAAAAAElFTkSuQmCC\r\n" -->
-
-						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAqCAYAAADI3bkcAAAAAXNSR0IArs4c6QAABS5JREFUWEfdmGlsVFUUx///N+20LBZBFgkUJJqoM0VQgzNtpDY0qGDYKmUJiQgYP2gicQkiUagh4hYSDIlBjCwmGKQJ+sXUoGCLlE5xAemiMRqgIEsRlUIpS+f9zZtauszrzHszhUbup5fMuef8zplz77nnEO2WJGYFUQBoDoAggCGCUtvLXOtvglcAnAIQAri1OoTtJNVql60f9+RqVPiyPpU07lpDudFP8juPl7MP7uYha18E2J+tO2SqAtBAN8qunyz/pMHsmgr+xsJCeWqO6gCkrOsHkIAlssqfyXvpC2gBYG5IQEUPbDEW0h80d0ia2APWXZsk+ZUFfErSYNe7e2ADyXr6AqYJ6Opt0QMcLkxS9AXCV+84Fzt7TPTGBs5/CJj7OHH3nUDvXsCJk0DZXmDdBuFsQ3TQPR5g6fPE+GzAG6deHj8JvL1GqKqN/ec5inC/DKBoKfHwBPtUP/OXUPSWsGt3R2MzpwGvv2I4Tp8jdcLkWbEz1BHw2neICbmxz+WVZmHOQuGXX9v45s8Flix2Dnz6jJD3WJLAUycBb66INtrcLKSkdHTi90PC9HmCde9Yq3dvwHI2cD9Axnb4n7PC8lXCzrIkU2LLh8TY0W3GfqoWXnpNqK8HCqYCK17u6MyCZ0zs+7GjUa8XSEmJDXLhgrPMiZsS+3YSffq0Ac9ZZKKqpk35R2uJ4Li231etNrGl2JnxRKRuPODOKXGwWnjRZUokEsmu9sSN8LTJwKrl0YcuHBY8ntiHLj0NeHcl8WDkHm6RPdsgrN8kbPokMTfiAltqE73W5s0Clr0Q7awkTJwunLAaIZfLEXCihWN2AbB8STSwaQr504T60y5prRbJzePHrjSXlgMfbLQvzampVqUjcnMA69taDQ3A+s1C8efuYa0droATM9G9u/6PwN37gG8OW684obGp5YU29FaiV1p3RZnq1hbJgj18VLh8qQ3Q8ACjRhBp3uShIy1SdzWhYRM4XCdcagfbimgduFEjiRRPctCRJrQ72vxwGDhyTLh4sWsg6+U2cjgR59EWxyNjYdKDFOsEWLBNTfGj1y+DGDY0vpytBFntz+TYpEZVpoC6Y4LTp6EFMngQMHCA2ya93aiq1Ru3w0AL9ugfQmOjfcTS0mCbz5b08GFERl9nkbYdBrZudTpulQV7XDh/3t7ogP7EkMEtDtnJ0ABuG2F/3TketzrzF8jLU8rpi9pmSjNg134RH9eGjCetma4vT33RpD2CxnTWb5CnvAYD+/fyiFPbkdLsRrioSEbxl+YWCdbAO2qR2Fr4qDGvqIj/dXVAVq4yzUuqBBR93Mjq/h7mlJfznFMOx8CRdMk2N0qYbw/L7YPSObu0lM2df/fnaJxMlUHqZeNliT+TU4qLGXYC7Qi4JbfNdQKetoUFv0gfwxk/rI+M+22XP0czFdY2uzmeQaytDnme6zZgXzD8HgRbhVb1GdGfU0pKaFPjOiJkBbXMlPmGvdPGszWVfD8edNwIZwW02IS5povLvKwfOamigg7KRosGfyC8WcATnfWRDMPDiTXl/CYWdFxgX9A8BmmYjYG9SucjtaXs4nKzN+srlBd1+hrQeJt83l8bMu5LFrge0qD2Sgh+33cA8ytLaDMCjPenAg/k65bGRlVKur2DNHmuNmRkJAXsD4ZXSni1VQnBA0YqJ1Tt4d/x0bqWGJ2tu0xTFYJuvqqb/KwmZBQkBdxynWERYOaDxs+em7D64A52UZDdueDL0ViYWkfAD2CXN5VP7f+WMVvTfwHeUlN3P1tIhQAAAABJRU5ErkJggg==">
+					<div class="qrcode flex ac jc">
+						<img class="qrcode_img" :src="meeting_code">
 					</div>
 					<div class="user_num flex-1 flex ac jsa">
 						<div class="flex fc ac">
-							<div class="mb-20">0</div>
+							<div class="mb-20">{{sign_list.length}}</div>
 							<div>已签到</div>
 						</div>
 						<div class="flex fc ac">
-							<div class="mb-20">1</div>
+							<div class="mb-20">{{unsign_list.length}}</div>
 							<div>未签到</div>
 						</div>
 					</div>
@@ -141,7 +139,10 @@
 						</div>
 					</div>
 					<div class="user_list flex-1 scroll-y hide_scrollbar">
-						<div class="user_item" v-for="item in 15">asdasd</div>
+						<div class="user_item flex" v-for="item in current_list">
+							<div class="mr-15">{{item.user_name}}</div>
+							<div v-if="item.status == 1">{{item.sign_in_time}}</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -174,6 +175,11 @@
 				sign_active_index:0,	//签到弹窗的默认下标
 				signin_list:[],			//当前已签到和未签到的用户列表
 				meeting_code:"",		//签到二维码地址
+				ws:null,
+				user_list:[],			//所有用户列表
+				current_list:[],		//当前显示的用户列表
+				sign_list:[],			//签到弹窗已签到的用户列表
+				unsign_list:[],			//签到弹窗未签到的用户列表
 			}
 		},
 		props:{
@@ -303,16 +309,86 @@
 				resource.meetingCode({meeting_id:this.info.meeting_id}).then(res => {
 					if(res.data.code == 1){
 						let data = res.data.data;
-						this.meeting_code = data.meeting_code;
+						this.meeting_code = data.meeting_code.replaceAll("\r|\n", "");
+						this.user_list = data.user_list;
+						this.user_list.map(item => {
+							if(item.status == 1){
+								this.sign_list.push(item);
+							}else{
+								this.unsign_list.push(item);
+							}
+						})
+						this.current_list = this.sign_list;
+
+						setTimeout(()=>{
+							let user_info = {
+								user_ding_id: '8318123',
+								meeting_id: "1",
+								sign_in_time: '263487263874623',
+								user_name: '彪子'
+							}
+
+							let c_list = this.user_list.filter(item => {
+								return item.user_id == user_info.user_ding_id;
+							})
+
+							if(c_list.length == 0){
+								this.$message.warning(`【${user_info.user_name}】不是参会人员!`)
+							}else{
+								if(c_list[0].status == 1){
+									this.$message.warning(`【${c_list[0].user_name}】已签到!`)
+								}else{
+									let i = this.unsign_list.findIndex(item => {
+										return item.user_id == c_list[0].user_id;
+									})
+									this.unsign_list.splice(i,1);
+									let new_user = {
+										sign_in_time:user_info.sign_in_time,
+										status: 1,
+										user_id: user_info.user_ding_id,
+										user_name: user_info.user_name
+									}
+									this.sign_list.unshift(new_user);
+									this.$message.warning(`【${c_list[0].user_name}】已签到!`)
+								}
+							}
+						},3000)
+
+						//创建webscoket链接
+						let websocket_url = data.websocket_url;
+						this.ws = new WebSocket(websocket_url)
+
+						this.ws.onopen = function () {
+							console.log('已连接')
+						}
+
+						this.ws.onmessage = function (evt) {
+							console.log(evt.data)
+						}
+
+						this.ws.onclose = function () {
+							console.log('已关闭')
+						}
+
 						this.$refs.sDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
 				})
 			},
+			//关闭签到弹窗
+			closeSignDialog(){
+				this.sign_active_index = 0;
+				this.user_list = [];			//所有用户列表
+				this.current_list = [];			//当前显示的用户列表
+				this.sign_list = [];			//签到弹窗已签到的用户列表
+				this.unsign_list = [];			//签到弹窗未签到的用户列表
+				this.ws.close();
+			},
 			//签到弹窗切换导航
 			signCheckTab(item,index){
 				this.sign_active_index = index;
+				this.current_list = index == 0?this.sign_list:this.unsign_list;
 			},
 			//上传文件
 			uploadFile(){
@@ -432,6 +508,10 @@
 		.qrcode{
 			border-bottom: 1px solid rgba(0,0,0,0.15);
 			height: 224px;
+			.qrcode_img{
+				width: 150px;
+				height: 150px;
+			}
 		}
 	}
 	.sign_tab{

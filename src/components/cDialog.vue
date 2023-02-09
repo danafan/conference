@@ -1,5 +1,5 @@
 <template>
-	<el-dialog :width="width" :close-on-click-modal="false" :append-to-body="append" :visible.sync="show_dialog" @close="closeDialog">
+	<el-dialog :width="width" :close-on-click-modal="false" :append-to-body="append" :visible.sync="show_dialog" @close="$emit('closeDialog')">
 		<div slot="title" class="dialog_title">
 			<div>{{title}}</div>
 			<img class="close_icon" src="../static/close_icon.png" @click="show_dialog = false">
@@ -62,7 +62,7 @@
 		methods:{
 			//关闭回调
 			closeDialog(){
-
+				
 			},
 			//点击确认
 			confirmDialog(){

@@ -18,7 +18,7 @@
 		</el-card>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
 		<div class="mt-10 scroll-y hide_scrollbar">
-			<ConferenceItem type="1" :info="item" v-for="item in list"/>
+			<ConferenceItem type="1" :info="item" v-for="item in list" @reload="meetingList"/>
 		</div>
 	</div>
 </template>
@@ -55,7 +55,7 @@
 			//获取设备列表
 			this.ajaxEquipment();
 			//获取会议室列表
-			// this.meetingList();
+			this.meetingList();
 		},
 		methods:{
 			//获取设备列表

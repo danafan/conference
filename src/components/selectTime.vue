@@ -228,6 +228,12 @@
 				default:{}
 			}
 		},
+		computed:{
+			//用户信息
+			userInfo(){
+				return this.$store.state.userInfo;
+			}
+		},
 		created(){
 			//设置默认状态
 			this.filterTime();
@@ -408,6 +414,14 @@
 							return item.is_exceed;
 						})
 						this.startMinTime = exceed_list[exceed_list.length - 1].interval.split('~')[1];
+
+						//设置默认参会人
+						let current_user = {
+							name:this.userInfo.real_name,
+							emplId :this.userInfo.user_id
+						}
+						this.selected_user.push(current_user)
+
 						this.$refs.CDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
@@ -435,7 +449,14 @@
 				    startWithDepartmentId:0 ,   	//仅支持0和-1
 				    onSuccess: (result) => {
 				    	alert(JSON.stringify(result));
-				    	this.selected_user = result.users;
+				    	//设置参会人
+				    	this.selected_user = [];
+						let current_user = {
+							name:this.userInfo.real_name,
+							emplId :this.userInfo.user_id
+						}
+						this.selected_user.push(current_user)
+				    	this.selected_user = [...this.selected_user,...result.users];
 				        /**
 				        {
 				            selectedCount:1,                              //选择人数

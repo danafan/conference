@@ -1,5 +1,8 @@
 import http from "./request.js";
-let path = {
+let path = {  
+  getConfig:'getConfig',                             //获取钉钉鉴权参数
+  dingAuth:'auth',                                   //钉钉鉴权
+  login:'ding_login',                                //钉钉登录获取用户信息
   meetingList:'meeting/list',						             //预约会议室列表
   addMeeting:'meeting/add',								           //预约会议（查看/预约）
   meetingRoomList:'meeting_room/list',               //会议室列表
@@ -20,6 +23,18 @@ let path = {
   meetingCode:'meeting/code',                        //获取签到二维码      
 } 
 export default {
+  //获取钉钉鉴权参数
+  getConfig(params) {
+    return http.get(path.getConfig, params);
+  },
+  //钉钉鉴权
+  dingAuth(params) {
+    return http.get(path.dingAuth, params);
+  },
+  //钉钉登录获取用户信息
+  login(params) {
+    return http.get(path.login, params);
+  },
   //会议室列表（预约会议室）
   meetingList(params) {
   	return http.get(path.meetingList, params);
