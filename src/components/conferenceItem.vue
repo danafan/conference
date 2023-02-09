@@ -19,7 +19,7 @@
 						<div class="f26">{{info.meeting_address}}</div>
 					</div>
 					<!-- 时间 -->
-					<div class="flex ac">
+					<div class="flex ac" v-if="type == 3">
 						<img class="time_icon mr-6" src="../static/time_icon.png">
 						<div class="f26">{{info.time}}</div>
 					</div>
@@ -32,6 +32,7 @@
 				</div>
 				<!-- 会议记录 -->
 				<div class="flex ac" v-if="type == 3">
+					<el-button type="text" @click="meetingCode">签到</el-button>
 					<el-button type="text" @click="$refs.CDialog.show_dialog = true" v-if="info.status == 1">取消日程</el-button>
 					<el-button type="text" @click="getDetail">会议详情</el-button>
 				</div>
@@ -110,7 +111,41 @@
 				<div class="f14">{{detail_info.admin_name}}</div>
 			</c-dialog>
 		</c-dialog>
+		<!-- 签到 -->
+		<c-dialog class="sign_dialog" width="540px" title="签到" :footer="false" ref="sDialog">
+			<div class="sign_box flex f16">
+				<!-- 左侧 -->
+				<div class="height-100 left_box flex fc">
+					<div class="qrcode">
+						<!-- "data:image/png;base64,data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQMAAACyIsh+AAAABlBMVEUAAAD///+l2Z/dAAAACXBI\r\nWXMAAA7EAAAOxAGVKw4bAAABO0lEQVRoge3YQRKDMAgFUGY8gEfK1XMkD+AMVT6Q1I2k3X4WdqJv\r\nRTFgRDw2xaUd169dHkHwBprecTjQfl/upQXBCkBuPcvXM7tE5gl+AbKfcqWa4F/gMTzBIsjXv+mJ\r\n5fAEC8Bj09gDoi89guAF6Ii+K/I93yOogmv7VO/rOj3zLdWCoARsacomJNxsakkf/wXBO8AiU43s\r\n9lAECwA9fD9lHjitfI/IPEEF4KsnP32ifIVgFWAjzQkJleuvv++mBCWAKu1T0r1yMXUSLIBs6V18\r\n1vSN1KuaoAa8aOPDHOUrADJVNcEb0Iz5I0ij4ROUQYS1JJGJ5tkRQQ00u4dXPTp8C0WwAsZRcJYv\r\nwgcmglUQFfzVl4TgB4BZ8wgQ5xwEVTC9/oLmbsucRAmKQLJUrQfZs/soE/O7EBTBB20DDtTUwwr9\r\nAAAAAElFTkSuQmCC\r\n" -->
 
+						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAqCAYAAADI3bkcAAAAAXNSR0IArs4c6QAABS5JREFUWEfdmGlsVFUUx///N+20LBZBFgkUJJqoM0VQgzNtpDY0qGDYKmUJiQgYP2gicQkiUagh4hYSDIlBjCwmGKQJ+sXUoGCLlE5xAemiMRqgIEsRlUIpS+f9zZtauszrzHszhUbup5fMuef8zplz77nnEO2WJGYFUQBoDoAggCGCUtvLXOtvglcAnAIQAri1OoTtJNVql60f9+RqVPiyPpU07lpDudFP8juPl7MP7uYha18E2J+tO2SqAtBAN8qunyz/pMHsmgr+xsJCeWqO6gCkrOsHkIAlssqfyXvpC2gBYG5IQEUPbDEW0h80d0ia2APWXZsk+ZUFfErSYNe7e2ADyXr6AqYJ6Opt0QMcLkxS9AXCV+84Fzt7TPTGBs5/CJj7OHH3nUDvXsCJk0DZXmDdBuFsQ3TQPR5g6fPE+GzAG6deHj8JvL1GqKqN/ec5inC/DKBoKfHwBPtUP/OXUPSWsGt3R2MzpwGvv2I4Tp8jdcLkWbEz1BHw2neICbmxz+WVZmHOQuGXX9v45s8Flix2Dnz6jJD3WJLAUycBb66INtrcLKSkdHTi90PC9HmCde9Yq3dvwHI2cD9Axnb4n7PC8lXCzrIkU2LLh8TY0W3GfqoWXnpNqK8HCqYCK17u6MyCZ0zs+7GjUa8XSEmJDXLhgrPMiZsS+3YSffq0Ac9ZZKKqpk35R2uJ4Li231etNrGl2JnxRKRuPODOKXGwWnjRZUokEsmu9sSN8LTJwKrl0YcuHBY8ntiHLj0NeHcl8WDkHm6RPdsgrN8kbPokMTfiAltqE73W5s0Clr0Q7awkTJwunLAaIZfLEXCihWN2AbB8STSwaQr504T60y5prRbJzePHrjSXlgMfbLQvzampVqUjcnMA69taDQ3A+s1C8efuYa0droATM9G9u/6PwN37gG8OW684obGp5YU29FaiV1p3RZnq1hbJgj18VLh8qQ3Q8ACjRhBp3uShIy1SdzWhYRM4XCdcagfbimgduFEjiRRPctCRJrQ72vxwGDhyTLh4sWsg6+U2cjgR59EWxyNjYdKDFOsEWLBNTfGj1y+DGDY0vpytBFntz+TYpEZVpoC6Y4LTp6EFMngQMHCA2ya93aiq1Ru3w0AL9ugfQmOjfcTS0mCbz5b08GFERl9nkbYdBrZudTpulQV7XDh/3t7ogP7EkMEtDtnJ0ABuG2F/3TketzrzF8jLU8rpi9pmSjNg134RH9eGjCetma4vT33RpD2CxnTWb5CnvAYD+/fyiFPbkdLsRrioSEbxl+YWCdbAO2qR2Fr4qDGvqIj/dXVAVq4yzUuqBBR93Mjq/h7mlJfznFMOx8CRdMk2N0qYbw/L7YPSObu0lM2df/fnaJxMlUHqZeNliT+TU4qLGXYC7Qi4JbfNdQKetoUFv0gfwxk/rI+M+22XP0czFdY2uzmeQaytDnme6zZgXzD8HgRbhVb1GdGfU0pKaFPjOiJkBbXMlPmGvdPGszWVfD8edNwIZwW02IS5povLvKwfOamigg7KRosGfyC8WcATnfWRDMPDiTXl/CYWdFxgX9A8BmmYjYG9SucjtaXs4nKzN+srlBd1+hrQeJt83l8bMu5LFrge0qD2Sgh+33cA8ytLaDMCjPenAg/k65bGRlVKur2DNHmuNmRkJAXsD4ZXSni1VQnBA0YqJ1Tt4d/x0bqWGJ2tu0xTFYJuvqqb/KwmZBQkBdxynWERYOaDxs+em7D64A52UZDdueDL0ViYWkfAD2CXN5VP7f+WMVvTfwHeUlN3P1tIhQAAAABJRU5ErkJggg==">
+					</div>
+					<div class="user_num flex-1 flex ac jsa">
+						<div class="flex fc ac">
+							<div class="mb-20">0</div>
+							<div>已签到</div>
+						</div>
+						<div class="flex fc ac">
+							<div class="mb-20">1</div>
+							<div>未签到</div>
+						</div>
+					</div>
+				</div>
+				<!-- 右侧 -->
+				<div class="flex-1 flex fc">
+					<div class="sign_tab flex ac jsa">
+						<div class="tab_item relative pointer" v-for="(item,index) in tab_list" @click="signCheckTab(item,index)">
+							<div class="fw-500" :class="{'primary_color':sign_active_index == index}">{{item.name}}</div>
+							<div class="active_line absolute bottom-0 width-100" v-if="sign_active_index == index"></div>
+						</div>
+					</div>
+					<div class="user_list flex-1 scroll-y hide_scrollbar">
+						<div class="user_item" v-for="item in 15">asdasd</div>
+					</div>
+				</div>
+			</div>
+		</c-dialog>
 	</div>
 </template>
 <script>
@@ -136,7 +171,9 @@
 					id:'0'
 				}],						//签到状态导航
 				active_index:0,			//默认选中的导航下标
+				sign_active_index:0,	//签到弹窗的默认下标
 				signin_list:[],			//当前已签到和未签到的用户列表
+				meeting_code:"",		//签到二维码地址
 			}
 		},
 		props:{
@@ -261,6 +298,22 @@
 					return i.status == item.id;
 				})
 			},
+			//点击签到
+			meetingCode(){
+				resource.meetingCode({meeting_id:this.info.meeting_id}).then(res => {
+					if(res.data.code == 1){
+						let data = res.data.data;
+						this.meeting_code = data.meeting_code;
+						this.$refs.sDialog.show_dialog = true;
+					}else{
+						this.$message.warning(res.data.msg);
+					}
+				})
+			},
+			//签到弹窗切换导航
+			signCheckTab(item,index){
+				this.sign_active_index = index;
+			},
 			//上传文件
 			uploadFile(){
 				if (this.$refs.fileUpload.files.length > 0) {
@@ -313,6 +366,11 @@
 		}
 	}
 </script>
+<style>
+.sign_dialog .el-dialog__body{
+	padding: 0!important;
+}
+</style>
 <style lang="less" scoped>
 .people_icon{
 	width: 22px;
@@ -366,4 +424,27 @@
 		opacity: 0;
 	}
 }
+.sign_box{
+	height: 390px;
+	.left_box{
+		border-right: 1px solid rgba(0,0,0,0.15);
+		width: 224px;
+		.qrcode{
+			border-bottom: 1px solid rgba(0,0,0,0.15);
+			height: 224px;
+		}
+	}
+	.sign_tab{
+		height: 46px;
+		border-bottom: 1px solid rgba(0,0,0,0.15);
+	}
+	.user_list{
+		padding:8px 12px;
+		.user_item{
+			padding-top: 8px;
+			padding-bottom: 8px;
+		}
+	}
+}
+
 </style>

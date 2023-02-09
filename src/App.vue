@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+  import * as dd from 'dingtalk-jsapi';
   export default {
     created() {
       let domain = 'http://img.92nu.com/';

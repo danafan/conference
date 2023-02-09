@@ -1,22 +1,23 @@
 import http from "./request.js";
 let path = {
-  meetingList:'meeting/list',						      //预约会议室列表
-  addMeeting:'meeting/add',								  //预约会议（查看/预约）
-  meetingRoomList:'meeting_room/list',                    //会议室列表
-  uploadFile:'common/upload',							  //上传文件
-  deleteFile:'common/del_file',							  //删除文件
-  ajaxEquipment:'meeting_room/ajax_equipment',			  //获取设备列表
-  delEquipment:'meeting_room/del_equipment',			  //删除设备
-  addEquipment:'meeting_room/add_equipment',			  //添加设备
-  addMettingRoom:'meeting_room/add',					  //创建会议室
-  editMettingRoom:'meeting_room/edit',					  //查看/编辑会议室
-  updateMettingRoom:'meeting_room/update',				  //启用/禁用/删除
-  ajaxDeptLevel:'meeting/ajax_dept_level',          //获取部门列表和会议级别
-  meetingRecord:'meeting/record',                   //获取会议记录列表
-  meetingCancle:'meeting/cancle',                   //取消日程
-  meetingDetail:'meeting/detail',                   //获取会议详情
+  meetingList:'meeting/list',						             //预约会议室列表
+  addMeeting:'meeting/add',								           //预约会议（查看/预约）
+  meetingRoomList:'meeting_room/list',               //会议室列表
+  uploadFile:'common/upload',							           //上传文件
+  deleteFile:'common/del_file',							         //删除文件
+  ajaxEquipment:'meeting_room/ajax_equipment',			 //获取设备列表
+  delEquipment:'meeting_room/del_equipment',			   //删除设备
+  addEquipment:'meeting_room/add_equipment',			   //添加设备
+  addMettingRoom:'meeting_room/add',					       //创建会议室
+  editMettingRoom:'meeting_room/edit',					     //查看/编辑会议室
+  updateMettingRoom:'meeting_room/update',				   //启用/禁用/删除
+  ajaxDeptLevel:'meeting/ajax_dept_level',           //获取部门列表和会议级别
+  meetingRecord:'meeting/record',                    //获取会议记录列表
+  meetingCancle:'meeting/cancle',                    //取消日程
+  meetingDetail:'meeting/detail',                    //获取会议详情
   updateMinutes:'meeting/update_minutes',            //更新会议纪要
   statisticsList:'statistics/list',                  //会议统计
+  meetingCode:'meeting/code',                        //获取签到二维码      
 } 
 export default {
   //会议室列表（预约会议室）
@@ -94,5 +95,9 @@ export default {
   //会议统计
   statisticsList(params) {
     return http.get(path.statisticsList, params);
+  },
+  //获取签到二维码
+  meetingCode(params) {
+    return http.get(path.meetingCode, params);
   },
 };
