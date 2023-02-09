@@ -19,8 +19,8 @@
 						</el-input>
 						<el-option v-for="(item,index) in equipment_list" :key="item.equipment_id" :label="item.equipment_name" :value="item.equipment_id">
 							<div class="flex ac jsb" @click="changeEquipment(index)">
-								<el-checkbox v-model="item.is_checked">{{ item.equipment_name }}</el-checkbox>
-								<div @click.stop="deleteItem(item.equipment_id,index)">删除</div>
+								{{ item.equipment_name }}
+								<img class="delete_small_icon" src="../../../static/delete_small_icon.png" @click.stop="deleteItem(item.equipment_id,index)">
 							</div>
 						</el-option>
 					</div>
@@ -125,6 +125,7 @@
 			},
 			//点击切换选中设备
 			changeEquipment(index){
+				console.log(index);
 				this.equipment_list[index].is_checked = !this.equipment_list[index].is_checked
 			},
 			//点击添加设备
@@ -200,5 +201,8 @@
 }
 </style>
 <style lang="less" scoped>
-
+.delete_small_icon{
+	width: 16px;
+	height: 16px;
+}
 </style>

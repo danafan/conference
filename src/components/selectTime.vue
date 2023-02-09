@@ -218,6 +218,7 @@
 				startTime:"",		//会议时间
 				startMinTime:"",	//开始时间最小时间
 				endTime:"",
+				pickedUsers:[],		//当前已选中的用户
 				
 			}
 		},
@@ -241,8 +242,35 @@
 		methods:{
 			//设置默认状态
 			filterTime(){
-				this.info.meeting_records.map(r_item => {
-					var arr = [];
+				if(this.info.meeting_records.length > 0){
+					this.info.meeting_records.map(r_item => {
+						var arr = [];
+						this.list.map((item,index) => {
+							let start_time = item.interval.split('~')[0];
+							let end_time = item.interval.split('~')[1];
+							let arg = this.getStatus(start_time,end_time);
+							item['is_selected'] = false;
+							item['is_hover'] = false;
+							for(let k in arg){
+								item[k] = arg[k];
+							}
+
+							if(r_item.start_time == item.arg_start_time && r_item.end_time == item.arg_end_time){
+								arr[0] = index;
+								arr[1] = index;
+							}else if(r_item.start_time == item.arg_start_time || r_item.end_time == item.arg_end_time){
+								arr.push(index)
+							}
+						})
+						console.log(arr)
+						this.list.map((item,index) => {
+							if(index >= arr[0] && index <= arr[1]){
+								item['disable'] = true;
+								item['user_name'] = r_item.admin_name;
+							}
+						})
+					})
+				}else{
 					this.list.map((item,index) => {
 						let start_time = item.interval.split('~')[0];
 						let end_time = item.interval.split('~')[1];
@@ -252,19 +280,8 @@
 						for(let k in arg){
 							item[k] = arg[k];
 						}
-
-						if(r_item.start_time == item.arg_start_time || r_item.end_time == item.arg_end_time){
-							arr.push(index)
-						}
 					})
-					this.list.map((item,index) => {
-						if(index >= arr[0] && index <= arr[1]){
-							item['disable'] = true;
-							item['user_name'] = r_item.admin_name;
-						}
-					})
-					
-				})
+				}
 			},
 			//处理每一格的时间
 			getStatus(start_time,end_time){
@@ -432,6 +449,8 @@
 							emplId :this.userInfo.user_id
 						}
 						this.selected_user.push(current_user)
+						//设置当前选中的参会人员
+						this.setPickedUsers();
 
 						this.$refs.CDialog.show_dialog = true;
 					}else{
@@ -448,7 +467,7 @@
 				    multiple:true,            		//是否多选
 				    limitTips:"超出了",          		//超过限定人数返回提示
 				    maxUsers:1000,            		//最大可选人数
-				    pickedUsers:[],            		//已选用户
+				    pickedUsers:this.pickedUsers,   //已选用户
 				    pickedDepartments:[],          	//已选部门
 				    disabledUsers:[],            	//不可选用户
 				    disabledDepartments:[],        	//不可选部门
@@ -456,25 +475,13 @@
 				    requiredDepartments:[],        	//必选部门（不可取消选中状态）
 				    appId:2398948762,              	//微应用Id，企业内部应用查看AgentId
 				    permissionType:"GLOBAL",          
-				    responseUserOnly:true,         //返回人，或者返回人和部门
+				    responseUserOnly:true,         	//返回人，或者返回人和部门
 				    startWithDepartmentId:0 ,   	//仅支持0和-1
 				    onSuccess: (result) => {
-				    	alert(JSON.stringify(result));
 				    	//设置参会人
-				    	this.selected_user = [];
-				    	let current_user = {
-				    		name:this.userInfo.real_name,
-				    		emplId :this.userInfo.user_id
-				    	}
-				    	this.selected_user.push(current_user)
 				    	this.selected_user = [...this.selected_user,...result.users];
-				        /**
-				        {
-				            selectedCount:1,                              //选择人数
-				            users:[{"name":"","avatar":"","emplId ":""}]，//返回选人的列表，列表中的对象包含name（用户名），avatar（用户头像），emplId（用户工号）三个字段
-				            departments:[{"id":,"name":"","number":}]//返回已选部门列表，列表中每个对象包含id（部门id）、name（部门名称）、number（部门人数）
-				        }
-				        */
+				    	//设置当前选中的参会人员
+				    	this.setPickedUsers();
 				    },
 				    onFail : function(err) {}
 				});
@@ -483,6 +490,14 @@
 			//关闭选中的人员
 			closeFn(index){
 				this.selected_user.splice(index,1);
+				//设置当前选中的参会人员
+				this.setPickedUsers();
+			},
+			//设置当前选中的参会人员
+			setPickedUsers(){
+				this.pickedUsers = this.selected_user.map(item => {
+					return item.emplId;
+				})
 			},
 			//弹窗确定
 			confirmFn(){
@@ -498,12 +513,9 @@
 						end_time:`${this.date} ${this.endTime}:00`,
 						notice_type:this.notice_type,
 						meeting_level:this.meeting_level,
+						user_ids:this.pickedUsers.join(','),
 						remark:this.remark,
 					}
-					let user_ids = this.selected_user.map(item => {
-						return item.emplId
-					})
-					arg['user_ids'] = user_ids.join(',');
 					resource.addMeetingPost(arg).then(res => {
 						if(res.data.code == 1){
 							this.$message.success(res.data.msg);

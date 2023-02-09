@@ -40,11 +40,11 @@
 			<SelectTime :info="info" v-if="type == '1'" @reloadFn="$emit('reload')"/>
 		</el-card>
 		<!-- 编辑 -->
-		<c-dialog title="编辑会议室" @cancleFn="$refs.CDialog.show_dialog = false" @confirmFn="confirmFn" ref="CDialog">
+		<c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
 			<Add ref="add" :isEdit="true" :info="detail_info"/>
 		</c-dialog>
 		<!-- 取消日程 -->
-		<c-dialog title="取消日程" cancelText="暂不" @cancleFn="$refs.CDialog.show_dialog = false" @confirmFn="confirmCancel" ref="CDialog">
+		<c-dialog title="取消日程" width="420px" cancelText="暂不" @cancleFn="$refs.CDialog.show_dialog = false" @confirmFn="confirmCancel" ref="CDialog">
 			<div class="f16">
 				<div class="mb-10">会议室：{{info.meeting_room_name}}</div>
 				<div>时间：{{info.time}}</div>
@@ -206,7 +206,7 @@
 				resource.editMettingRoomGet({meeting_room_id:this.info.meeting_room_id}).then(res => {
 					if(res.data.code == 1){
 						this.detail_info = res.data.data;
-						this.$refs.CDialog.show_dialog = true;
+						this.$refs.eDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
