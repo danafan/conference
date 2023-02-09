@@ -76,6 +76,29 @@
 			},
 			//获取会议室列表
 			meetingList(){
+				// this.list = [{
+				// 	meeting_room_id: 8,
+				// 	limit_num: 15,
+				// 	meeting_room_name: "测试会议室",
+				// 	meeting_image: "idc\/DataCenter_202302070958267553.png",
+				// 	equipment_str: "白板/电话/投影仪",
+				// 	meeting_address: "钱塘江边",
+				// 	meeting_records: [{
+				// 		start_time: "2023-02-09 16:00:00",
+				// 		end_time: "2023-02-09 18:30:00",
+				// 		admin_id: "8318",
+				// 		admin_name: "范玉龙"
+				// 	},{
+				// 		start_time: "2023-02-09 20:30:00",
+				// 		end_time: "2023-02-09 21:30:00",
+				// 		admin_id: "8318",
+				// 		admin_name: "范玉龙"
+				// 	}]
+				// }]
+				// return;
+
+
+
 				let arg = {
 					flag:this.flag,
 					day:this.date,

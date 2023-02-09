@@ -8,15 +8,15 @@
   import resource from './api/resource.js'
   export default {
     created() {
-      let user_info = {
-        user_id: '8318',
-        real_name:"范玉龙",
-        user_type:0
-      }
-      this.$store.commit('setUserInfo',user_info);
+      // let user_info = {
+      //   user_id: '8318',
+      //   real_name:"范玉龙",
+      //   user_type:0
+      // }
+      // this.$store.commit('setUserInfo',user_info);
 
-      this.$router.replace('/index');
-      return
+      // this.$router.replace('/index');
+      // return
 
 
       //获取钉钉鉴权参数

@@ -241,19 +241,29 @@
 		methods:{
 			//设置默认状态
 			filterTime(){
-				this.list.map((item,index) => {
-					let start_time = item.interval.split('~')[0];
-					let end_time = item.interval.split('~')[1];
-					let arg = this.getStatus(start_time,end_time);
-					item['is_selected'] = false;
-					item['is_hover'] = false;
-					for(let k in arg){
-						item[k] = arg[k];
-					}
-					// if(index == 26){
-					// 	item['disable'] = true;
-					// 	item['user_name'] = '彪子';
-					// }
+				this.info.meeting_records.map(r_item => {
+					var arr = [];
+					this.list.map((item,index) => {
+						let start_time = item.interval.split('~')[0];
+						let end_time = item.interval.split('~')[1];
+						let arg = this.getStatus(start_time,end_time);
+						item['is_selected'] = false;
+						item['is_hover'] = false;
+						for(let k in arg){
+							item[k] = arg[k];
+						}
+
+						if(r_item.start_time == item.arg_start_time || r_item.end_time == item.arg_end_time){
+							arr.push(index)
+						}
+					})
+					this.list.map((item,index) => {
+						if(index >= arr[0] && index <= arr[1]){
+							item['disable'] = true;
+							item['user_name'] = r_item.admin_name;
+						}
+					})
+					
 				})
 			},
 			//处理每一格的时间
@@ -261,18 +271,18 @@
 				var now = new Date(); 				//当前日期  
 				var nowYear = now.getYear(); 		//当前年 
 				nowYear += (nowYear < 2000) ? 1900 : 0;
-				var nowMonth = now.getMonth(); 		//当前月 
-				var nowDay = now.getDate(); 		//当前日 
+				var nowMonth = now.getMonth()<10?`0${now.getMonth() + 1}`:now.getMonth() + 1; 		//当前月 
+				var nowDay = now.getDate()<10?`0${now.getDate()}`:now.getDate(); 		//当前日 
 				var nowHours = now.getHours();  	//当前小时
 				var nowMinutes = now.getMinutes();  //当前分钟
 				var Seconds = now.getSeconds();     //当前秒
 
 				//当前时间
-				let current_time = `${nowYear}-${nowMonth+1}-${nowDay} ${nowHours}:${nowMinutes}:${Seconds}`;
+				let current_time = `${nowYear}-${nowMonth}-${nowDay} ${nowHours}:${nowMinutes}:${Seconds}`;
 				//指定的开始时间
-				let set_start_time = `${nowYear}-${nowMonth+1}-${nowDay} ${start_time}:00`;
+				let set_start_time = `${nowYear}-${nowMonth}-${nowDay} ${start_time}:00`;
 				//指定的结束时间
-				let set_end_time = `${nowYear}-${nowMonth+1}-${nowDay} ${end_time}:00`;
+				let set_end_time = `${nowYear}-${nowMonth}-${nowDay} ${end_time}:00`;
 
 				//当前时间是否超出指定的结束时间
 				let is_exceed = new Date(current_time).getTime() > new Date(set_end_time).getTime();
@@ -416,6 +426,7 @@
 						this.startMinTime = exceed_list[exceed_list.length - 1].interval.split('~')[1];
 
 						//设置默认参会人
+						this.selected_user = [];
 						let current_user = {
 							name:this.userInfo.real_name,
 							emplId :this.userInfo.user_id
@@ -451,11 +462,11 @@
 				    	alert(JSON.stringify(result));
 				    	//设置参会人
 				    	this.selected_user = [];
-						let current_user = {
-							name:this.userInfo.real_name,
-							emplId :this.userInfo.user_id
-						}
-						this.selected_user.push(current_user)
+				    	let current_user = {
+				    		name:this.userInfo.real_name,
+				    		emplId :this.userInfo.user_id
+				    	}
+				    	this.selected_user.push(current_user)
 				    	this.selected_user = [...this.selected_user,...result.users];
 				        /**
 				        {
