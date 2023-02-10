@@ -1,5 +1,6 @@
 import http from "./request.js";
 let path = {  
+  getUserInfo:'getuserinfo',                         //判断用户是否登录
   getConfig:'getConfig',                             //获取钉钉鉴权参数
   dingAuth:'auth',                                   //钉钉鉴权
   login:'ding_login',                                //钉钉登录获取用户信息
@@ -23,6 +24,10 @@ let path = {
   meetingCode:'meeting/code',                        //获取签到二维码      
 } 
 export default {
+  //判断用户是否登录
+  getUserInfo(params) {
+    return http.get(path.getUserInfo, params);
+  },
   //获取钉钉鉴权参数
   getConfig(params) {
     return http.get(path.getConfig, params);

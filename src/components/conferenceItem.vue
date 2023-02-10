@@ -320,13 +320,23 @@
 						})
 						this.current_list = this.sign_list;
 
-						setTimeout(()=>{
-							let user_info = {
-								user_ding_id: '8318123',
-								meeting_id: "1",
-								sign_in_time: '263487263874623',
-								user_name: '彪子'
-							}
+						//创建webscoket链接
+						let websocket_url = data.websocket_url;
+						this.ws = new WebSocket(websocket_url)
+
+						this.ws.onopen = function () {
+							console.log('已连接')
+						}
+
+						this.ws.onmessage = function (evt) {
+							console.log(evt.data)
+							let user_info = evt.data;
+							// let user_info = {
+							// 	user_ding_id: '8318123',
+							// 	meeting_id: "1",
+							// 	sign_in_time: '263487263874623',
+							// 	user_name: '彪子'
+							// }
 
 							let c_list = this.user_list.filter(item => {
 								return item.user_id == user_info.user_ding_id;
@@ -352,18 +362,6 @@
 									this.$message.warning(`【${c_list[0].user_name}】已签到!`)
 								}
 							}
-						},3000)
-
-						//创建webscoket链接
-						let websocket_url = data.websocket_url;
-						this.ws = new WebSocket(websocket_url)
-
-						this.ws.onopen = function () {
-							console.log('已连接')
-						}
-
-						this.ws.onmessage = function (evt) {
-							console.log(evt.data)
 						}
 
 						this.ws.onclose = function () {

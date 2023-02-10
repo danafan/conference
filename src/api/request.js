@@ -11,8 +11,8 @@ export function middleWare(params, type) {
     }
   }
   //组织参数
-  // var req = { ...params, ...{ sign: sign, token: token } };
-  var req = { ...params, ...{ admin_id: "8318" } };
+  var req = { ...params};
+  // var req = { ...params, ...{ admin_id: "8318" } };
   var get_arr = [];
   //post请求参数
   var form = new FormData();

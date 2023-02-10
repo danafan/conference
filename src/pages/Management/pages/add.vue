@@ -12,14 +12,18 @@
 				<el-input-number v-model="limit_num" @blur="chageNum" :precision="0" :min="1"></el-input-number>
 			</el-form-item>
 			<el-form-item label="会议室设备：">
-				<el-select v-model="selected_equipment" clearable multiple filterable collapse-tags placeholder="请选择">
+				<el-select v-model="selected_equipment" @remove-tag="changeSelect" clearable multiple filterable collapse-tags placeholder="请选择">
 					<div class="ddd pl-6 pr-6">
 						<el-input placeholder="请输入设备名称" size="small" v-model="equipment_name">
 							<el-button slot="append" @click="addEquipment">添加</el-button>
 						</el-input>
 						<el-option v-for="(item,index) in equipment_list" :key="item.equipment_id" :label="item.equipment_name" :value="item.equipment_id">
 							<div class="flex ac jsb" @click="changeEquipment(index)">
-								{{ item.equipment_name }}
+								<div class="flex ac">
+									<img class="select_icon mr-6" src="../../../static/selected_icon.png" v-if="item.is_checked">
+									<img class="select_icon mr-6" src="../../../static/unselect_icon.png" v-else>
+									{{ item.equipment_name }}
+								</div>
 								<img class="delete_small_icon" src="../../../static/delete_small_icon.png" @click.stop="deleteItem(item.equipment_id,index)">
 							</div>
 						</el-option>
@@ -123,9 +127,16 @@
 					}
 				})
 			},
+			//多选删除
+			changeSelect(e){
+				this.equipment_list.map(item => {
+					if(item.equipment_id == e){
+						item.is_checked = false;
+					}
+				})
+			},
 			//点击切换选中设备
 			changeEquipment(index){
-				console.log(index);
 				this.equipment_list[index].is_checked = !this.equipment_list[index].is_checked
 			},
 			//点击添加设备
@@ -204,5 +215,9 @@
 .delete_small_icon{
 	width: 16px;
 	height: 16px;
+}
+.select_icon{
+	width: 16px;
+	height: 17px;
 }
 </style>
