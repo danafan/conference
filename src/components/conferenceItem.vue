@@ -32,12 +32,12 @@
 				</div>
 				<!-- 会议记录 -->
 				<div class="flex ac" v-if="type == 3">
-					<el-button type="text" @click="meetingCode">签到</el-button>
-					<el-button type="text" @click="$refs.CDialog.show_dialog = true" v-if="info.status == 1">取消日程</el-button>
+					<el-button type="text" @click="meetingCode" v-if="info.is_sign">签到</el-button>
+					<el-button type="text" @click="$refs.CDialog.show_dialog = true" v-if="info.cancle_status == 1">取消日程</el-button>
 					<el-button type="text" @click="getDetail">会议详情</el-button>
 				</div>
 			</div>
-			<SelectTime :info="info" v-if="type == '1'" @reloadFn="$emit('reload')"/>
+			<SelectTime :info="info" v-if="type == '1'" @reloadFn="reloadFn"/>
 		</el-card>
 		<!-- 编辑 -->
 		<c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
@@ -324,19 +324,12 @@
 						let websocket_url = data.websocket_url;
 						this.ws = new WebSocket(websocket_url)
 
-						this.ws.onopen = function () {
+						this.ws.onopen = () => {
 							console.log('已连接')
 						}
 
-						this.ws.onmessage = function (evt) {
-							console.log(evt.data)
-							let user_info = evt.data;
-							// let user_info = {
-							// 	user_ding_id: '8318123',
-							// 	meeting_id: "1",
-							// 	sign_in_time: '263487263874623',
-							// 	user_name: '彪子'
-							// }
+						this.ws.onmessage =  (evt) => {
+							let user_info = JSON.parse(evt.data);
 
 							let c_list = this.user_list.filter(item => {
 								return item.user_id == user_info.user_ding_id;
@@ -429,6 +422,9 @@
 			//点击下载会议附件
 			downLoad(link){
 				window.open(this.domain  + link);
+			},
+			reloadFn(){
+				this.$emit('reloadFn')
 			}
 		},
 		components:{

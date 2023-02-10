@@ -49,7 +49,14 @@
 			}
 		},
 		created(){
-			this.checkMenu(this.active_index);
+			if(this.$route.path == '/list' || this.$route.path == '/add'){
+				this.active_index = 1;
+			}else{
+				let index = this.menu_list.findIndex(item => {
+					return item.path == this.$route.path;
+				})
+				this.active_index = index;
+			}
 		},
 		methods:{
 			//切换左侧导航

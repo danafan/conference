@@ -1,12 +1,12 @@
 <template>
 	<div class="flex select_box mt-24 mb-24">
-		<div class="relative item" :class="[{'is_exceed':item.is_exceed},{'pointer':!item.is_exceed && !item.disable},{'is_disable':item.disable},{'active_background':item.is_selected},{'hover_background':item.is_hover && !item.is_selected && frequency > 0}]" @mouseover="changeShow(item,index,true)" @mouseleave="changeShow(item,index,false)" @click="selectedItem(index)" v-for="(item,index) in list" :key="index">
+		<div class="relative item" :class="[{'is_exceed':item.is_exceed},{'pointer':!item.is_exceed && !item.disable},{'is_disable':item.disable && !item.is_exceed},{'active_background':item.is_selected},{'hover_background':item.is_hover && !item.is_selected && frequency > 0}]" @mouseover="changeShow(item,index,true)" @mouseleave="changeShow(item,index,false)" @click="selectedItem(index)" v-for="(item,index) in list" :key="index">
 			<div class="point_start absolute" v-if="index == 0">{{item.point_time}}</div>
 			<div class="point absolute" v-if="index%2 == 1">{{item.point_time}}</div>
 			<!-- 已过期 -->
 			<div class="popover absolute f14" v-if="active_index == index && item.is_exceed">已过期</div>
 			<!-- 被预定 -->
-			<div class="popover absolute f14" v-if="active_index == index && item.disable">已被 <span class="primary_color">{{item.user_name}}</span> 预定</div>
+			<div class="popover absolute f14" v-if="active_index == index && item.disable && !item.is_exceed">已被 <span class="primary_color">{{item.user_name}}</span> 预定</div>
 			<!-- 可选择 -->
 			<div class="popconfirm absolute f14" v-if="start_index == index">
 				<div>{{popconfirm_value}}</div>
@@ -71,7 +71,7 @@
 				<div class="f16 dark_color">{{selected_user.length}}人</div>
 			</div>
 		</el-form-item>
-		<el-form-item label="会议室：">
+		<el-form-item label="会议室：" required>
 			<el-select v-model="meeting_room_ids" multiple filterable>
 				<el-option v-for="item in meeting_room" :label="item.meeting_room_name" :value="item.meeting_room_id">
 				</el-option>
@@ -262,7 +262,6 @@
 								arr.push(index)
 							}
 						})
-						console.log(arr)
 						this.list.map((item,index) => {
 							if(index >= arr[0] && index <= arr[1]){
 								item['disable'] = true;
@@ -479,7 +478,7 @@
 				    startWithDepartmentId:0 ,   	//仅支持0和-1
 				    onSuccess: (result) => {
 				    	//设置参会人
-				    	this.selected_user = [...this.selected_user,...result.users];
+				    	this.selected_user = result.users;
 				    	//设置当前选中的参会人员
 				    	this.setPickedUsers();
 				    },
@@ -505,6 +504,8 @@
 					this.$message.warning('请输入会议标题！');
 				}else if(this.meeting_level == ''){
 					this.$message.warning('请选择会议级别！');
+				}else if(this.meeting_room_ids.length == 0){
+					this.$message.warning('请选择会议室！');
 				}else{
 					let arg = {
 						meeting_title:this.meeting_title,
@@ -520,6 +521,7 @@
 						if(res.data.code == 1){
 							this.$message.success(res.data.msg);
 							this.$refs.CDialog.show_dialog = false;
+							this.start_index = -1;
 							this.$emit('reloadFn');
 						}else{
 							this.$message.warning(res.data.msg);

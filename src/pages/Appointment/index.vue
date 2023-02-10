@@ -18,7 +18,7 @@
 		</el-card>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
 		<div class="mt-10 scroll-y hide_scrollbar">
-			<ConferenceItem type="1" :info="item" v-for="item in list" @reload="meetingList"/>
+			<ConferenceItem type="1" :info="item" v-for="item in list" @reloadFn="reloadFn"/>
 		</div>
 	</div>
 </template>
@@ -82,7 +82,6 @@
 					equipment_id:this.equipment.join(','),
 					search:this.search
 				}
-
 				resource.meetingList(arg).then(res => {
 					if(res.data.code == 1){
 						let list = res.data.data;
@@ -94,6 +93,9 @@
 						this.$message.warning(res.data.msg);
 					}
 				})
+			},
+			reloadFn(){
+				this.meetingList();
 			}
 		},
 		components:{

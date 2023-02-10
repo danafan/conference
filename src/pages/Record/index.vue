@@ -109,7 +109,7 @@
 		},
 		created(){
 			//获取部门列表和会议室级别
-			this.ajaxDeptLevel();
+			this.ajaxDeptLevel(); 
 		},
 		methods:{
 			//获取部门列表和会议室级别
@@ -152,6 +152,7 @@
 						let data = res.data.data;
 						data.data.map(item => {
 							item['time'] = filterMeetingTime(item.start_time,item.end_time);
+							item['is_sign'] = getNowDate() == item.start_time.split(' ')[0]
 						})
 						this.list = [...this.list,...data.data];
 						if(this.page == data.last_page){
