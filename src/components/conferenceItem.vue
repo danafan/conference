@@ -37,7 +37,7 @@
 					<el-button type="text" @click="getDetail">会议详情</el-button>
 				</div>
 			</div>
-			<SelectTime :info="info" v-if="type == '1'" @reloadFn="reloadFn"/>
+			<SelectTime :info="info" v-if="type == '1'" @reloadFn="$emit('reloadFn')"/>
 		</el-card>
 		<!-- 编辑 -->
 		<c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
@@ -233,7 +233,7 @@
 					resource.editMettingRoomPost(arg).then(res => {
 						if(res.data.code == 1){
 							this.$message.success(res.data.msg);
-							this.$refs.CDialog.show_dialog = false;
+							this.$refs.eDialog.show_dialog = false;
 							this.$emit('reload');
 						}else{
 							this.$message.warning(res.data.msg);
@@ -422,10 +422,8 @@
 			//点击下载会议附件
 			downLoad(link){
 				window.open(this.domain  + link);
-			},
-			reloadFn(){
-				this.$emit('reloadFn')
 			}
+			
 		},
 		components:{
 			DefaultImage,

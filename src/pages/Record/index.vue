@@ -78,7 +78,7 @@
 						}
 					}]
 				},	 							//时间区间
-				date:[],						//日期
+				date:[getNowDate(),getNowDate()],						//日期
 				dept_list:[],					//部门列表
 				dept_id:[],						//选中的部门
 				meeting_level_list:[],			//会议级别

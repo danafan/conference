@@ -95,6 +95,7 @@
 				})
 			},
 			reloadFn(){
+				this.list = [];
 				this.meetingList();
 			}
 		},

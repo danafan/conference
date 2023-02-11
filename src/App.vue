@@ -13,12 +13,11 @@
           this.$store.commit('setUserInfo',res.data.data);
           this.$store.commit('setDomain',res.data.data.domain);
           localStorage.setItem("domain",res.data.data.domain);
-          if(this.$route.path == '/'){
-            this.$router.replace('/appointment')
-          }
+          //获取钉钉鉴权参数
+          // this.getConfig(1);
         }else{
           //获取钉钉鉴权参数
-          this.getConfig();
+          this.getConfig(0);
         }
       })
     },
@@ -29,24 +28,24 @@
     },
     methods: {
       //获取钉钉鉴权参数
-      getConfig(){
+      getConfig(type){
         resource.getConfig().then(res => {
           if(res.data.code == 1){
             let data = res.data.data;
             //钉钉鉴权
-            this.dingAuth(data);
+            this.dingAuth(data,type);
           }
         })
       },
       //钉钉鉴权
-      dingAuth(data){
+      dingAuth(data,type){
         resource.dingAuth(data).then(res => {
           //钉钉鉴权
-          this.ddConfig(res.data.data);
+          this.ddConfig(res.data.data,type);
         })
       },
       //钉钉鉴权
-      ddConfig(data){
+      ddConfig(data,type){
         dd.config({
           agentId: data.agentId, // 必填，微应用ID
           corpId: data.corpId,//必填，企业ID
@@ -60,8 +59,15 @@
         dd.error(function (err) {
           alert('dd error: ' + JSON.stringify(err));
         })
-        //钉钉获取code
-        this.getDingCode(data.corpId);
+        if(type == 1){    //已登录
+          if(this.$route.path == '/'){
+            this.$router.replace('/appointment')
+          }
+        }else{            //未登录
+          //钉钉获取code
+          this.getDingCode(data.corpId);
+        }
+        
       },
       //钉钉获取code
       getDingCode(corpId){

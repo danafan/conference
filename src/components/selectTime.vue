@@ -19,8 +19,8 @@
 		</div>
 		<!-- 确认会议室详情 -->
 		<c-dialog title="杭州德儿电子商务有限公司" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" confirmText="完成" @confirmFn="confirmFn" ref="CDialog">
-			<el-form size="small" label-width="100px" required>
-				<el-form-item label="会议标题：">
+			<el-form size="small" label-width="100px">
+				<el-form-item label="会议标题：" required>
 					<el-input style="flex:1" v-model="meeting_title" placeholder="请添加会议标题">
 					</el-input>
 				</el-form-item>
@@ -31,10 +31,10 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="会议日期：">
-					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions">
+					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" @change="changeDate" :clearable="false" :picker-options="pickerOptions">
 					</el-date-picker>
 				</el-form-item>
-				<el-form-item label="会议时间：">
+				<el-form-item label="会议时间：" required>
 					<div class="flex ac">
 						<el-time-select placeholder="起始时间"
 						v-model="startTime"
@@ -96,6 +96,7 @@
 
 	import CDialog from '../components/cDialog.vue'
 	import resource from '../api/resource.js'
+	import { getNowDate } from '../utils.js'
 	export default{
 		data(){
 			return{
@@ -413,12 +414,31 @@
 				this.frequency = 0;						//当前有效点击次数
 				this.popconfirm_value = "";				//选中时间的弹窗时间段
 			},
+			//切换选中日期
+			changeDate(e,is_default){
+				let exceed_list = this.list.filter(item => {
+					return item.is_exceed;
+				})
+				if(e == getNowDate()){
+					this.startMinTime = exceed_list[exceed_list.length - 1].interval.split('~')[1];
+				}else{
+					this.startMinTime = '';
+				}
+				if(!is_default){
+					this.startTime = '';
+					this.endTime = '';
+				}
+			},
 			//选中确定
 			selectedTime(){
 				this.meeting_title = `【${this.info.meeting_room_name}】预定`;
 				resource.addMeetingGet().then(res => {
 					if(res.data.code == 1){
 						this.meeting_level_list = res.data.data.meeting_level;
+						let meeting_level = this.meeting_level_list.filter(item => {
+							return item.meeting_level_name == '部门级';
+						})
+						this.meeting_level = meeting_level[0].meeting_level_id;
 						this.meeting_room = res.data.data.meeting_room;
 						this.meeting_room_ids = [];
 						this.meeting_room_ids.push(this.info.meeting_room_id);
@@ -436,11 +456,9 @@
 						this.startTime = arr[0].interval.split('~')[0];
 						this.endTime = arr[arr.length - 1].interval.split('~')[1];
 
-						let exceed_list = this.list.filter(item => {
-							return item.is_exceed;
-						})
-						this.startMinTime = exceed_list[exceed_list.length - 1].interval.split('~')[1];
-
+						//处理默认不能选择的时间
+						this.changeDate(this.date,true);
+						
 						//设置默认参会人
 						this.selected_user = [];
 						let current_user = {
@@ -506,6 +524,10 @@
 					this.$message.warning('请选择会议级别！');
 				}else if(this.meeting_room_ids.length == 0){
 					this.$message.warning('请选择会议室！');
+				}else if(this.startTime == ''){
+					this.$message.warning('请选择会议开始时间！');
+				}else if(this.endTime == ''){
+					this.$message.warning('请选择会议结束时间！');
 				}else{
 					let arg = {
 						meeting_title:this.meeting_title,
