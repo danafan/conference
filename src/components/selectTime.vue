@@ -18,7 +18,7 @@
 			</div>
 		</div>
 		<!-- 确认会议室详情 -->
-		<c-dialog title="杭州德儿电子商务有限公司" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" confirmText="完成" @confirmFn="confirmFn" ref="CDialog">
+		<c-dialog title="杭州德儿电子商务有限公司" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" confirmText="完成" @confirmFn="confirmFn" @closeDialog="$emit('reloadFn')" ref="CDialog">
 			<el-form size="small" label-width="100px">
 				<el-form-item label="会议标题：" required>
 					<el-input style="flex:1" v-model="meeting_title" placeholder="请添加会议标题">

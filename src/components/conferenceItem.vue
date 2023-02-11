@@ -83,7 +83,7 @@
 				<el-divider></el-divider>
 				<div class="flex mb-15">
 					<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(item,index)">
-						<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}</div>
+						<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}({{item.id == 1?sign_num:unsign_num}})</div>
 						<div class="active_line absolute bottom-0 width-100" v-if="active_index == index"></div>
 					</div>
 				</div>
@@ -94,6 +94,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- 会议纪要 -->
 			<c-dialog title="会议纪要" :footer="false" :append="true" ref="mDialog">
 				<div class="f16 fw-500 mb-15">会议记录</div>
 				<div class="pre-line" v-html="detail_info.meeting_minutes"></div>
@@ -179,7 +180,9 @@
 				user_list:[],			//所有用户列表
 				current_list:[],		//当前显示的用户列表
 				sign_list:[],			//签到弹窗已签到的用户列表
+				sign_num:0,
 				unsign_list:[],			//签到弹窗未签到的用户列表
+				unsign_num:0
 			}
 		},
 		props:{
@@ -291,6 +294,16 @@
 						this.signin_list = this.detail_info.user_list.filter(i => {
 							return i.status == '1';
 						})
+						//已签到的人
+						let sign_list = this.detail_info.user_list.filter(item => {
+							return item.status == 1;
+						})
+						this.sign_num = sign_list.length;
+						//未签到的人
+						let unsign_list = this.detail_info.user_list.filter(item => {
+							return item.status == 0;
+						})
+						this.unsign_num = unsign_list.length;
 						this.$refs.dDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
@@ -423,7 +436,7 @@
 			downLoad(link){
 				window.open(this.domain  + link);
 			}
-			
+
 		},
 		components:{
 			DefaultImage,

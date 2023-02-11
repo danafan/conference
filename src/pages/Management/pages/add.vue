@@ -12,7 +12,7 @@
 				<el-input-number v-model="limit_num" @blur="chageNum" :precision="0" :min="1"></el-input-number>
 			</el-form-item>
 			<el-form-item label="会议室设备：">
-				<el-select v-model="selected_equipment" @remove-tag="changeSelect" clearable multiple filterable collapse-tags placeholder="请选择">
+				<el-select v-model="selected_equipment" @remove-tag="changeSelect" multiple filterable placeholder="请选择">
 					<div class="ddd pl-6 pr-6">
 						<el-input placeholder="请输入设备名称" size="small" v-model="equipment_name">
 							<el-button slot="append" @click="addEquipment">添加</el-button>
@@ -49,6 +49,7 @@
 
 	import resource from '../../../api/resource.js'
 	export default{
+		inject: ["reload"],
 		data(){
 			return{
 				meeting_room_name:"",			//会议室名称
@@ -190,6 +191,7 @@
 					}
 					resource.addMettingRoom(arg).then(res => {
 						if(res.data.code == 1){
+							this.reload();
 							this.$message.success(res.data.msg);
 						}else{
 							this.$message.warning(res.data.msg);
