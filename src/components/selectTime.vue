@@ -268,6 +268,7 @@
 								arr.push(index)
 							}
 						})
+						console.log(this.list)
 						this.list.map((item,index) => {
 							if(index >= arr[0] && index <= arr[1]){
 								item['disable'] = true;
@@ -302,9 +303,9 @@
 				//当前时间
 				let current_time = this.current_date == `${nowYear}-${nowMonth}-${nowDay}`?`${nowYear}-${nowMonth}-${nowDay} ${nowHours}:${nowMinutes}:${Seconds}`:`${this.current_date} 00:00:00`;
 				//指定的开始时间
-				let set_start_time = this.current_date == `${nowYear}-${nowMonth}-${nowDay}`?`${nowYear}-${nowMonth}-${nowDay} ${start_time}:00`:`${this.current_date}  00:00:00`;
+				let set_start_time = `${this.current_date} ${start_time}:00`;
 				//指定的结束时间
-				let set_end_time = this.current_date == `${nowYear}-${nowMonth}-${nowDay}`?`${nowYear}-${nowMonth}-${nowDay} ${end_time}:00`:`${this.current_date}  00:00:00`;
+				let set_end_time = `${this.current_date} ${end_time}:00`;
 
 				//当前时间是否超出指定的结束时间
 				let is_exceed = new Date(current_time).getTime() > new Date(set_end_time).getTime();
@@ -503,7 +504,10 @@
 			//关闭选中的人员
 			closeFn(index){
 				this.selected_user.splice(index,1);
-				this.pickedUsers = this.selected_user.map(item => {
+				let pickedUsers = this.selected_user.filter(item => {
+					return item.emplId != this.userInfo.user_id;
+				})
+				this.pickedUsers = pickedUsers.map(item => {
 					return item.emplId;
 				})
 			},
@@ -545,9 +549,12 @@
 						end_time:`${this.date} ${this.endTime}:00`,
 						notice_type:this.notice_type,
 						meeting_level:this.meeting_level,
-						user_ids:this.pickedUsers.join(','),
 						remark:this.remark,
 					}
+					let user_ids = this.selected_user.map(item => {
+						return item.emplId
+					})
+					arg['user_ids'] = user_ids.join(',');
 					resource.addMeetingPost(arg).then(res => {
 						if(res.data.code == 1){
 							this.$message.success(res.data.msg);

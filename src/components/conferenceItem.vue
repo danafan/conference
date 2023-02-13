@@ -293,7 +293,7 @@
 					if(res.data.code == 1){
 						this.$message.success(res.data.msg);
 						this.$refs.CDialog.show_dialog = false;
-						this.$emit('reload',this.info.meeting_id);
+						this.$emit('reload');
 					}else{
 						this.$message.warning(res.data.msg);
 					}
