@@ -5,7 +5,10 @@
 				<DefaultImage :info="info"/>
 				<div class="flex-1 flex fc jsb">
 					<!-- 名称 -->
-					<div class="f20 fw-600">{{info.meeting_room_name}}</div>
+					<div class="flex ac f20">
+						<div class="mr-8 fw-600">{{info.meeting_room_name}}</div>
+						<div class="status_tag f14">已预定</div>
+					</div>
 					<!-- 设备 -->
 					<div class="f16" v-if="type == 1 || type == 2">{{info.equipment_str}}</div>
 					<!-- 人数 -->
@@ -37,7 +40,7 @@
 					<el-button type="text" @click="getDetail">会议详情</el-button>
 				</div>
 			</div>
-			<SelectTime :info="info" v-if="type == '1'" @reloadFn="$emit('reloadFn')"/>
+			<SelectTime :info="info" :current_date="current_date" v-if="type == '1'" @reloadFn="$emit('reloadFn')"/>
 		</el-card>
 		<!-- 编辑 -->
 		<c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
@@ -68,7 +71,7 @@
 					</div>
 					<div class="flex ac" v-for="(item,index) in detail_info.meeting_files">
 						<img class="link_icon mr-6" src="../static/link_icon.png">
-						<div class="f14 mr-38">{{item}}</div>
+						<el-button class="f14" type="text" @click="downLoad(item)">{{item.split('/')[1]}}</el-button>
 						<el-button size="mini" type="text" @click="deleteFile(index)">删除</el-button>
 					</div>
 					<el-input class="mb-10" type="textarea" :rows="5" placeholder="请输入会议记录" v-model="detail_info.meeting_minutes">
@@ -97,16 +100,20 @@
 			<!-- 会议纪要 -->
 			<c-dialog title="会议纪要" :footer="false" :append="true" ref="mDialog">
 				<div class="f16 fw-500 mb-15">会议记录</div>
-				<div class="pre-line" v-html="detail_info.meeting_minutes"></div>
+				<div class="pre-line" v-html="detail_info.meeting_minutes" v-if="detail_info.meeting_minutes"></div>
+				<div v-else>暂无内容</div>
 				<el-divider></el-divider>
 				<div class="f16 fw-500 mb-15">会议附件</div>
-				<div class="minutes_row flex mb-10" v-for="(item,index) in detail_info.meeting_files">
-					<img class="minutes_icon mr-18" src="../static/minutes_icon.png">
-					<div class="flex fc as jsb f14">
-						<div>{{item}}</div>
-						<el-button size="mini" type="text" @click="downLoad(item)">下载</el-button>
+				<div v-if="detail_info.meeting_files.length > 0">
+					<div class="minutes_row flex mb-10" v-for="(item,index) in detail_info.meeting_files">
+						<img class="minutes_icon mr-18" src="../static/minutes_icon.png">
+						<div class="flex fc as jsb f14">
+							<div>{{item.split('/')[1]}}</div>
+							<el-button size="mini" type="text" @click="downLoad(item)">下载</el-button>
+						</div>
 					</div>
 				</div>
+				<div v-else>暂无上传</div>
 				<el-divider></el-divider>
 				<div class="f16 fw-500 mb-15">会议记录人</div>
 				<div class="f14">{{detail_info.admin_name}}</div>
@@ -163,7 +170,9 @@
 	export default{
 		data(){
 			return{
-				detail_info:{},			//获取的详情
+				detail_info:{
+					meeting_files:[]
+				},			//获取的详情
 				show_drawer:false,		//会议详情弹窗
 				tab_list:[{
 					name:'已签到',
@@ -195,6 +204,11 @@
 			info:{
 				type: Object,
 				default:{}
+			},
+			//当前的筛选条件日期
+			current_date:{
+				type: String,
+				default:''
 			}
 		},
 		computed:{
@@ -427,6 +441,7 @@
 				}
 				resource.updateMinutes(arg).then(res => {
 					if(res.data.code == 1){
+						this.$refs.dDialog.show_dialog = false;
 						this.$message.success(res.data.msg);
 					}else{
 						this.$message.warning(res.data.msg);
@@ -454,6 +469,13 @@
 }
 </style>
 <style lang="less" scoped>
+.status_tag{
+	border-radius: 12px;
+	width: 60px;
+	text-align: center;
+	height: 24px;
+	line-height: 24px;
+}
 .people_icon{
 	width: 22px;
 	height: 22px;

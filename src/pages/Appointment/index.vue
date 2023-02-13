@@ -3,14 +3,14 @@
 		<el-card class="tab_card" shadow="never">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="时间：">
-					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions" @change="meetingList">
+					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions" @change="reloadFn">
 					</el-date-picker>
 				</el-form-item>
 				<el-form-item label="搜索：">
-					<el-input v-model="search" clearable placeholder="搜索会议室" @change="meetingList"></el-input>
+					<el-input v-model="search" clearable placeholder="搜索会议室" @change="reloadFn"></el-input>
 				</el-form-item>
 				<el-form-item label="按设备筛选：">
-					<el-checkbox-group v-model="equipment" @change="meetingList">
+					<el-checkbox-group v-model="equipment" @change="reloadFn">
 						<el-checkbox :label="item.equipment_id" v-for="item in equipment_list">{{item.equipment_name}}</el-checkbox>
 					</el-checkbox-group>
 				</el-form-item>
@@ -18,7 +18,7 @@
 		</el-card>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
 		<div class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
-			<ConferenceItem type="1" :info="item" v-for="item in list" @reloadFn="reloadFn"/>
+			<ConferenceItem type="1" :info="item" :current_date="date" v-for="item in list" @reloadFn="reloadFn"/>
 		</div>
 		<EmptyPage class="mt-10" :loading="loading" v-else/>
 	</div>

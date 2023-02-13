@@ -1,12 +1,12 @@
 <template>
 	<div class="flex select_box mt-24 mb-24">
-		<div class="relative item" :class="[{'is_exceed':item.is_exceed},{'pointer':!item.is_exceed && !item.disable},{'is_disable':item.disable && !item.is_exceed},{'active_background':item.is_selected},{'hover_background':item.is_hover && !item.is_selected && frequency > 0}]" @mouseover="changeShow(item,index,true)" @mouseleave="changeShow(item,index,false)" @click="selectedItem(index)" v-for="(item,index) in list" :key="index">
+		<div class="relative item" :class="[{'is_exceed':item.is_exceed},{'pointer':!item.is_exceed && !item.disable},{'is_disable':item.disable},{'active_background':item.is_selected},{'hover_background':item.is_hover && !item.is_selected && frequency > 0}]" @mouseover="changeShow(item,index,true)" @mouseleave="changeShow(item,index,false)" @click="selectedItem(index)" v-for="(item,index) in list" :key="index">
 			<div class="point_start absolute" v-if="index == 0">{{item.point_time}}</div>
 			<div class="point absolute" v-if="index%2 == 1">{{item.point_time}}</div>
 			<!-- 已过期 -->
 			<div class="popover absolute f14" v-if="active_index == index && item.is_exceed">已过期</div>
 			<!-- 被预定 -->
-			<div class="popover absolute f14" v-if="active_index == index && item.disable && !item.is_exceed">已被 <span class="primary_color">{{item.user_name}}</span> 预定</div>
+			<div class="popover absolute f14" v-if="active_index == index && item.disable">已被 <span class="primary_color">{{item.user_name}}</span> 预定</div>
 			<!-- 可选择 -->
 			<div class="popconfirm absolute f14" v-if="start_index == index">
 				<div>{{popconfirm_value}}</div>
@@ -64,7 +64,7 @@
 			<div class="people_box flex">
 				<div class="flex-1">
 					<el-button type="primary" plain icon="el-icon-plus" @click="checkUser">批量添加</el-button>
-					<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="index > 0" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
+					<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="user.emplId != userInfo.user_id" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
 						{{user.name}}
 					</el-tag>
 				</div>
@@ -220,7 +220,6 @@
 				startMinTime:"",	//开始时间最小时间
 				endTime:"",
 				pickedUsers:[],		//当前已选中的用户
-				requiredUsers:[],	//不能被取消的用户
 				
 			}
 		},
@@ -229,6 +228,11 @@
 			info:{
 				type:Object,
 				default:{}
+			},
+			//当前的筛选条件日期
+			current_date:{
+				type: String,
+				default:''
 			}
 		},
 		computed:{
@@ -296,11 +300,11 @@
 				var Seconds = now.getSeconds();     //当前秒
 
 				//当前时间
-				let current_time = `${nowYear}-${nowMonth}-${nowDay} ${nowHours}:${nowMinutes}:${Seconds}`;
+				let current_time = this.current_date == `${nowYear}-${nowMonth}-${nowDay}`?`${nowYear}-${nowMonth}-${nowDay} ${nowHours}:${nowMinutes}:${Seconds}`:`${this.current_date} 00:00:00`;
 				//指定的开始时间
-				let set_start_time = `${nowYear}-${nowMonth}-${nowDay} ${start_time}:00`;
+				let set_start_time = this.current_date == `${nowYear}-${nowMonth}-${nowDay}`?`${nowYear}-${nowMonth}-${nowDay} ${start_time}:00`:`${this.current_date}  00:00:00`;
 				//指定的结束时间
-				let set_end_time = `${nowYear}-${nowMonth}-${nowDay} ${end_time}:00`;
+				let set_end_time = this.current_date == `${nowYear}-${nowMonth}-${nowDay}`?`${nowYear}-${nowMonth}-${nowDay} ${end_time}:00`:`${this.current_date}  00:00:00`;
 
 				//当前时间是否超出指定的结束时间
 				let is_exceed = new Date(current_time).getTime() > new Date(set_end_time).getTime();
@@ -461,18 +465,7 @@
 						this.changeDate(this.date,true);
 						
 						//设置默认参会人
-						this.selected_user = [];
-						let current_user = {
-							name:this.userInfo.real_name,
-							emplId :this.userInfo.user_id
-						}
-						this.selected_user.push(current_user)
-
-						this.requiredUsers = [];
-						this.requiredUsers.push(this.userInfo.user_id);
-						
-						//设置当前选中的参会人员
-						this.setPickedUsers();
+						this.setPickedUsers([]);
 
 						this.$refs.CDialog.show_dialog = true;
 					}else{
@@ -493,17 +486,15 @@
 				    pickedDepartments:[],          	//已选部门
 				    disabledUsers:[],            	//不可选用户
 				    disabledDepartments:[],        	//不可选部门
-				    requiredUsers:this.requiredUsers,//必选用户（不可取消选中状态）
+				    requiredUsers:[this.userInfo.user_id],//必选用户（不可取消选中状态）
 				    requiredDepartments:[],        	//必选部门（不可取消选中状态）
 				    appId:2398948762,              	//微应用Id，企业内部应用查看AgentId
 				    permissionType:"GLOBAL",          
 				    responseUserOnly:true,         	//返回人，或者返回人和部门
 				    startWithDepartmentId:0 ,   	//仅支持0和-1
 				    onSuccess: (result) => {
-				    	//设置参会人
-				    	this.selected_user = result.users;
 				    	//设置当前选中的参会人员
-				    	this.setPickedUsers();
+						this.setPickedUsers(result.users)
 				    },
 				    onFail : function(err) {}
 				});
@@ -512,14 +503,27 @@
 			//关闭选中的人员
 			closeFn(index){
 				this.selected_user.splice(index,1);
-				//设置当前选中的参会人员
-				this.setPickedUsers();
-			},
-			//设置当前选中的参会人员
-			setPickedUsers(){
 				this.pickedUsers = this.selected_user.map(item => {
 					return item.emplId;
 				})
+			},
+			//设置当前选中的参会人员
+			setPickedUsers(users){
+				this.selected_user = [];
+				let current_user = {
+					name:this.userInfo.real_name,
+					emplId :this.userInfo.user_id
+				}
+				this.selected_user.push(current_user)
+				this.selected_user = [...this.selected_user,...users];
+
+				let pickedUsers = this.selected_user.filter(item => {
+					return item.emplId != this.userInfo.user_id;
+				})
+				this.pickedUsers = pickedUsers.map(item => {
+					return item.emplId;
+				})
+
 			},
 			//弹窗确定
 			confirmFn(){
