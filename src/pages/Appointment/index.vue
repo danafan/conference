@@ -17,15 +17,17 @@
 			</el-form>
 		</el-card>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
-		<div class="mt-10 scroll-y hide_scrollbar">
+		<div class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
 			<ConferenceItem type="1" :info="item" v-for="item in list" @reloadFn="reloadFn"/>
 		</div>
+		<EmptyPage class="mt-10" :loading="loading" v-else/>
 	</div>
 </template>
 <script>
 	import { getNowDate } from '../../utils.js'
 	import PageTab from '../../components/pageTab.vue'
 	import ConferenceItem from '../../components/conferenceItem.vue'
+	import EmptyPage from '../../components/empty_page.vue'
 
 	import resource from '../../api/resource.js'
 	export default{
@@ -49,6 +51,7 @@
 				}],						//导航列表
 				flag:"1",				//当前选中的导航
 				list:[],				//会议室列表
+				loading:true,			//是否加载
 			}
 		},
 		created(){
@@ -82,8 +85,10 @@
 					equipment_id:this.equipment.join(','),
 					search:this.search
 				}
+				this.loading = true;
 				resource.meetingList(arg).then(res => {
 					if(res.data.code == 1){
+						this.loading = false;
 						let list = res.data.data;
 						list.map(item => {
 							item['equipment_str'] = item.equipment_name.join(' / ');
@@ -101,7 +106,8 @@
 		},
 		components:{
 			PageTab,
-			ConferenceItem
+			ConferenceItem,
+			EmptyPage
 		}
 	}
 </script>

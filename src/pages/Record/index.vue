@@ -29,15 +29,17 @@
 			</el-form>
 		</el-card>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
-		<div v-infinite-scroll="load" class="mt-10 scroll-y hide_scrollbar">
+		<div v-infinite-scroll="load" class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
 			<ConferenceItem type="3" :info="item" v-for="item in list" @reload="reloadFn"/>
 		</div>
+		<EmptyPage class="mt-10" :loading="loading" v-else/>
 	</div>
 </template>
 <script>
 	import {getNowDate,getMonthStartDate,getCurrentDate,getLastMonthStartDate,getLastMonthEndDate,filterMeetingTime} from '../../utils.js'
 	import PageTab from '../../components/pageTab.vue'
 	import ConferenceItem from '../../components/conferenceItem.vue'
+	import EmptyPage from '../../components/empty_page.vue'
 
 	import resource from '../../api/resource.js'
 	export default{
@@ -104,12 +106,15 @@
 				page:1,
 				pagesize:10,
 				list:[],						//会议室列表
-				finished:false
+				finished:false,
+				loading:true
 			}
 		},
 		created(){
 			//获取部门列表和会议室级别
 			this.ajaxDeptLevel(); 
+			//获取会议记录
+			this.meetingRecord(true);
 		},
 		methods:{
 			//获取部门列表和会议室级别
@@ -147,12 +152,14 @@
 					page:this.page,
 					pagesize:this.pagesize
 				}
+				this.loading = true;
 				resource.meetingRecord(arg).then(res => {
 					if(res.data.code == 1){
+						this.loading = false;
 						let data = res.data.data;
 						data.data.map(item => {
 							item['time'] = filterMeetingTime(item.start_time,item.end_time);
-							item['is_sign'] = getNowDate() == item.start_time.split(' ')[0]
+							item['is_sign'] = getNowDate() == item.start_time.split(' ')[0] && item.status != 0
 						})
 						this.list = [...this.list,...data.data];
 						if(this.page == data.last_page){
@@ -183,7 +190,8 @@
 		},
 		components:{
 			PageTab,
-			ConferenceItem
+			ConferenceItem,
+			EmptyPage
 		}
 	}
 </script>

@@ -291,6 +291,7 @@
 					if(res.data.code == 1){
 						this.detail_info = res.data.data;
 						this.detail_info['time'] = filterMeetingTime(this.detail_info.start_time,this.detail_info.end_time);
+						this.active_index = 0;
 						this.signin_list = this.detail_info.user_list.filter(i => {
 							return i.status == '1';
 						})

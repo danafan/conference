@@ -220,6 +220,7 @@
 				startMinTime:"",	//开始时间最小时间
 				endTime:"",
 				pickedUsers:[],		//当前已选中的用户
+				requiredUsers:[],	//不能被取消的用户
 				
 			}
 		},
@@ -466,6 +467,10 @@
 							emplId :this.userInfo.user_id
 						}
 						this.selected_user.push(current_user)
+
+						this.requiredUsers = [];
+						this.requiredUsers.push(this.userInfo.user_id);
+						
 						//设置当前选中的参会人员
 						this.setPickedUsers();
 
@@ -488,7 +493,7 @@
 				    pickedDepartments:[],          	//已选部门
 				    disabledUsers:[],            	//不可选用户
 				    disabledDepartments:[],        	//不可选部门
-				    requiredUsers:[],            	//必选用户（不可取消选中状态）
+				    requiredUsers:this.requiredUsers,//必选用户（不可取消选中状态）
 				    requiredDepartments:[],        	//必选部门（不可取消选中状态）
 				    appId:2398948762,              	//微应用Id，企业内部应用查看AgentId
 				    permissionType:"GLOBAL",          
