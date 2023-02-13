@@ -7,7 +7,7 @@
 					<!-- 名称 -->
 					<div class="flex ac f20">
 						<div class="mr-8 fw-600">{{info.meeting_room_name}}</div>
-						<div class="status_tag f14">已预定</div>
+						<div class="status_tag f14" :class="[{'yyd':info.status == '1'},{'jxz':info.status == '2'},{'yjs':info.status == '3'},,{'yqx':info.status == '4'}]" v-if="meeting_status == '0' && $route.path == '/record'">{{info.status | status}}</div>
 					</div>
 					<!-- 设备 -->
 					<div class="f16" v-if="type == 1 || type == 2">{{info.equipment_str}}</div>
@@ -209,7 +209,12 @@
 			current_date:{
 				type: String,
 				default:''
-			}
+			},
+			//判断是否是会议记录的全部
+			meeting_status:{
+				type: String,
+				default:''
+			},
 		},
 		computed:{
 			//图片前缀
@@ -454,6 +459,27 @@
 			}
 
 		},
+		filters:{
+			status(v){
+				let tab_list = [{
+					name:'已预定',
+					id:'1'
+				},{
+					name:'进行中',
+					id:'2'
+				},{
+					name:'已结束',
+					id:'3'
+				},{
+					name:'已取消',
+					id:'4'
+				}]
+				let arr = tab_list.filter(item => {
+					return item.id == v;
+				})
+				return arr.length > 0?arr[0].name:"-";
+			}
+		},
 		components:{
 			DefaultImage,
 			SelectTime,
@@ -474,7 +500,27 @@
 	width: 60px;
 	text-align: center;
 	height: 24px;
-	line-height: 24px;
+	line-height: 22px;
+}
+.yyd{
+	border:1px solid #2A37FD;
+	background-color: #2A37FD;
+	color: #ffffff;
+}
+.jxz{
+	border:1px solid #2A37FD;
+	background-color: #E8EFFF;
+	color: #2A37FD;
+}
+.yjs{
+	border:1px solid #7A82FF;
+	background-color: #EEF3FF;
+	color: #7A82FF;
+}
+.yqx{
+	border:1px solid #999999;
+	background-color: #F2F2F2;
+	color: #999999;
 }
 .people_icon{
 	width: 22px;

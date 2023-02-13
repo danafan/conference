@@ -14,7 +14,7 @@
           this.$store.commit('setDomain',res.data.data.domain);
           localStorage.setItem("domain",res.data.data.domain);
           //获取钉钉鉴权参数
-          this.getConfig(1);
+          // this.getConfig(1);
         }else{
           //获取钉钉鉴权参数
           this.getConfig(0);

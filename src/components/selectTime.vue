@@ -268,7 +268,6 @@
 								arr.push(index)
 							}
 						})
-						console.log(this.list)
 						this.list.map((item,index) => {
 							if(index >= arr[0] && index <= arr[1]){
 								item['disable'] = true;

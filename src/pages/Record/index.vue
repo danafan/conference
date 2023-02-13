@@ -30,7 +30,7 @@
 		</el-card>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
 		<div v-infinite-scroll="load" class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
-			<ConferenceItem type="3" :info="item" v-for="item in list" @reload="meetingRecord(true)"/>
+			<ConferenceItem type="3" :info="item" :meeting_status="meeting_status" v-for="item in list" @reload="meetingRecord(true)"/>
 		</div>
 		<EmptyPage class="mt-10" :loading="loading" v-else/>
 	</div>
