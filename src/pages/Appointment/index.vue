@@ -74,6 +74,7 @@
 			//切换导航
 			checkTab(item){
 				this.flag = item.id;
+				this.list = [];
 				//获取会议室列表
 				this.meetingList();
 			},

@@ -24,7 +24,19 @@
 	export default{
 		data(){
 			return{
-				menu_list:[{
+				menu_list:[],
+				default_menu_list:[{
+					icon:require('../../static/yyhy_icon.png'),
+					active_icon:require('../../static/yyhy_active.png'),
+					name:"预约会议",
+					path:'/appointment'
+				},{
+					icon:require('../../static/hyjl_icon.png'),
+					active_icon:require('../../static/hyjl_active.png'),
+					name:"会议记录",
+					path:'/record'
+				}],							//路由地址
+				admin_menu_list:[{
 					icon:require('../../static/yyhy_icon.png'),
 					active_icon:require('../../static/yyhy_active.png'),
 					name:"预约会议",
@@ -48,7 +60,15 @@
 				active_index:0,				//当前选中的路由下标
 			}
 		},
+		computed:{
+			//用户信息
+			userInfo(){
+				return this.$store.state.userInfo;
+			}
+		},
 		created(){
+			console.log(this.userInfo)
+			this.menu_list = this.userInfo.user_type == 1?this.admin_menu_list:this.default_menu_list;
 			if(this.$route.path == '/list' || this.$route.path == '/add'){
 				this.active_index = 1;
 			}else{

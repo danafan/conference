@@ -112,6 +112,7 @@
 							this.meeting_address = this.info.meeting_address;
 							this.remark = this.info.remark;
 						}
+						console.log(this.info)
 						equipment_list.map(item => {
 							let selected_equipment = this.selected_equipment.filter(i => {
 								return item.equipment_id == i;

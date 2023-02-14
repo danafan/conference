@@ -44,7 +44,7 @@
 		</el-card>
 		<!-- 编辑 -->
 		<c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
-			<Add ref="add" :isEdit="true" :info="detail_info"/>
+			<Add ref="add" :isEdit="true" :info="edit_info"/>
 		</c-dialog>
 		<!-- 取消日程 -->
 		<c-dialog title="取消日程" width="420px" cancelText="暂不" @cancleFn="$refs.CDialog.show_dialog = false" @confirmFn="confirmCancel" ref="CDialog">
@@ -64,14 +64,14 @@
 				<el-divider></el-divider>
 				<div class="fw-500">会议纪要</div>
 				<!-- 可编辑 -->
-				<div v-if="detail_info.edit_status == 1">
+				<div v-if="detail_info.edit_status == 0">
 					<div class="upload_box">
 						<el-button size="mini" type="text">添加附件</el-button>
 						<input type="file" ref="fileUpload" class="upload_file" @change="uploadFile">
 					</div>
 					<div class="flex ac" v-for="(item,index) in detail_info.meeting_files">
 						<img class="link_icon mr-6" src="../static/link_icon.png">
-						<el-button class="f14" type="text" @click="downLoad(item)">{{item.split('/')[1]}}</el-button>
+						<el-button class="f14" size="mini" type="text" @click="downLoad(item)">{{item.split('/')[1]}}</el-button>
 						<el-button size="mini" type="text" @click="deleteFile(index)">删除</el-button>
 					</div>
 					<el-input class="mb-10" type="textarea" :rows="5" placeholder="请输入会议记录" v-model="detail_info.meeting_minutes">
@@ -170,6 +170,9 @@
 	export default{
 		data(){
 			return{
+				edit_info:{
+					meeting_files:[]
+				},			//获取的详情
 				detail_info:{
 					meeting_files:[]
 				},			//获取的详情
@@ -227,7 +230,7 @@
 			editMetting(){
 				resource.editMettingRoomGet({meeting_room_id:this.info.meeting_room_id}).then(res => {
 					if(res.data.code == 1){
-						this.detail_info = res.data.data;
+						this.edit_info = res.data.data;
 						this.$refs.eDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
@@ -442,7 +445,7 @@
 				let arg = {
 					meeting_id:this.detail_info.meeting_id,
 					meeting_files:this.detail_info.meeting_files.join(','),
-					meeting_minutes:this.detail_info.meeting_minutes
+					meeting_minutes:!this.detail_info.meeting_minutes?'':this.detail_info.meeting_minutes
 				}
 				resource.updateMinutes(arg).then(res => {
 					if(res.data.code == 1){
