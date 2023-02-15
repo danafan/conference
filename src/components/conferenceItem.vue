@@ -64,7 +64,7 @@
 				<el-divider></el-divider>
 				<div class="fw-500">会议纪要</div>
 				<!-- 可编辑 -->
-				<div v-if="detail_info.edit_status == 0">
+				<div v-if="detail_info.edit_status == 1">
 					<div class="upload_box">
 						<el-button size="mini" type="text">添加附件</el-button>
 						<input type="file" ref="fileUpload" class="upload_file" @change="uploadFile">

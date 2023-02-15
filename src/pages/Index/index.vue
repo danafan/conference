@@ -21,6 +21,7 @@
 	</div>
 </template>
 <script>
+	import resource from '../../api/resource.js'
 	export default{
 		data(){
 			return{
@@ -60,22 +61,29 @@
 				active_index:0,				//当前选中的路由下标
 			}
 		},
-		computed:{
-			//用户信息
-			userInfo(){
-				return this.$store.state.userInfo;
-			}
-		},
 		created(){
-			this.menu_list = this.userInfo.user_type == 1?this.admin_menu_list:this.default_menu_list;
-			if(this.$route.path == '/list' || this.$route.path == '/add'){
-				this.active_index = 1;
-			}else{
-				let index = this.menu_list.findIndex(item => {
-					return item.path == this.$route.path;
-				})
-				this.active_index = index;
-			}
+			resource.getUserInfo().then(res => {
+				if(res.data.code == 1){
+					this.menu_list = res.data.data.user_type == 1?this.admin_menu_list:this.default_menu_list;
+
+					if(this.$route.path == '/list' || this.$route.path == '/add'){
+						if(res.data.data.user_type == 1){
+							this.active_index = 1;
+						}else{
+							this.active_index = 0;
+							this.$router.replace(this.menu_list[0].path);
+						}
+					}else{
+						let active_index = this.menu_list.findIndex(item => {
+							return item.path == this.$route.path			
+						})
+						this.active_index = active_index == -1?0:active_index;
+						if(this.$route.path != this.menu_list[this.active_index].path){
+							this.$router.replace(this.menu_list[this.active_index].path)
+						}
+					}
+				}
+			})
 		},
 		methods:{
 			//切换左侧导航

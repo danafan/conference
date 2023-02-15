@@ -11,10 +11,12 @@
       resource.getUserInfo().then(res => {
         if(res.data.code == 1){
           this.$store.commit('setUserInfo',res.data.data);
+
           this.$store.commit('setDomain',res.data.data.domain);
           localStorage.setItem("domain",res.data.data.domain);
+
           //获取钉钉鉴权参数
-          // this.getConfig(1);
+          this.getConfig(1);
         }else{
           //获取钉钉鉴权参数
           this.getConfig(0);
@@ -60,9 +62,7 @@
           alert('dd error: ' + JSON.stringify(err));
         })
         if(type == 1){    //已登录
-          if(this.$route.path == '/'){
-            this.$router.replace('/appointment')
-          }
+          // this.$router.replace('/index')
         }else{            //未登录
           //钉钉获取code
           this.getDingCode(data.corpId);
@@ -88,7 +88,7 @@
             this.$store.commit('setUserInfo',res.data.data);
             this.$store.commit('setDomain',res.data.data.domain);
             localStorage.setItem("domain",res.data.data.domain);
-            this.$router.replace('/appointment');
+            this.$router.replace('/index');
           }
         })
       }

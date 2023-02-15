@@ -43,7 +43,8 @@
 							start: '07:00',
 							step: '00:30',
 							end: '23:00',
-							minTime:startMinTime
+							minTime:startMinTime,
+							maxTime:endTime
 						}">
 					</el-time-select>
 					-
