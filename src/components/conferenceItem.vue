@@ -147,7 +147,7 @@
 						</div>
 					</div>
 					<div class="user_list flex-1 scroll-y hide_scrollbar">
-						<div class="user_item flex" v-for="item in current_list">
+						<div class="user_item flex jsb" v-for="item in current_list">
 							<div class="mr-15">{{item.user_name}}</div>
 							<div v-if="item.status == 1">{{item.sign_in_time}}</div>
 						</div>
@@ -372,10 +372,18 @@
 							})
 
 							if(c_list.length == 0){
-								this.$message.warning(`【${user_info.user_name}】不是参会人员!`)
+								// this.$message.warning(`【${user_info.user_name}】不是参会人员!`)
+								let new_user = {
+									sign_in_time:user_info.sign_in_time,
+									status: 1,
+									user_id: user_info.user_ding_id,
+									user_name: user_info.user_name
+								}
+								this.sign_list.unshift(new_user);
+								this.$message.success(`【${user_info.user_name}】已签到!`)
 							}else{
 								if(c_list[0].status == 1){
-									this.$message.warning(`【${c_list[0].user_name}】已签到!`)
+									this.$message.success(`【${c_list[0].user_name}】已签到!`)
 								}else{
 									let i = this.unsign_list.findIndex(item => {
 										return item.user_id == c_list[0].user_id;
@@ -388,7 +396,7 @@
 										user_name: user_info.user_name
 									}
 									this.sign_list.unshift(new_user);
-									this.$message.warning(`【${c_list[0].user_name}】已签到!`)
+									this.$message.success(`【${c_list[0].user_name}】已签到!`)
 								}
 							}
 						}
@@ -557,8 +565,8 @@
 	line-height: 50px;
 }
 .minutes_icon{
-	width: 30px;
-	height: 32px;
+	width: 27px;
+	height: 31px;
 }
 .minutes_row{
 	height: 46px;

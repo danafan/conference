@@ -67,7 +67,6 @@
 			}
 		},
 		created(){
-			console.log(this.userInfo)
 			this.menu_list = this.userInfo.user_type == 1?this.admin_menu_list:this.default_menu_list;
 			if(this.$route.path == '/list' || this.$route.path == '/add'){
 				this.active_index = 1;

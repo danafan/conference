@@ -158,7 +158,13 @@
 							item['time'] = filterMeetingTime(item.start_time,item.end_time);
 							item['is_sign'] = getNowDate() == item.start_time.split(' ')[0] && item.status != 0
 						})
-						this.list = [...this.list,...data.data];
+						if(is_reload){
+							this.list = data.data;
+						}else{
+							this.list = [...this.list,...data.data];
+						}
+						
+						
 						if(this.page == data.last_page){
 							this.finished = true;
 						}else{
