@@ -15,6 +15,10 @@
           this.$store.commit('setDomain',res.data.data.domain);
           localStorage.setItem("domain",res.data.data.domain);
 
+          // if(this.$route.path == '/'){
+          //   this.$router.replace('/index')
+          // }
+
           //获取钉钉鉴权参数
           this.getConfig(1);
         }else{
@@ -62,7 +66,9 @@
           alert('dd error: ' + JSON.stringify(err));
         })
         if(type == 1){    //已登录
-          this.$router.replace('/index')
+          if(this.$route.path == '/'){
+            this.$router.replace('/index')
+          }
         }else{            //未登录
           //钉钉获取code
           this.getDingCode(data.corpId);
