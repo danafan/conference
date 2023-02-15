@@ -62,7 +62,7 @@
           alert('dd error: ' + JSON.stringify(err));
         })
         if(type == 1){    //已登录
-          // this.$router.replace('/index')
+          this.$router.replace('/index')
         }else{            //未登录
           //钉钉获取code
           this.getDingCode(data.corpId);
