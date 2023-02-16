@@ -18,6 +18,7 @@
           // if(this.$route.path == '/'){
           //   this.$router.replace('/index')
           // }
+          // return;
 
           //获取钉钉鉴权参数
           this.getConfig(1);
@@ -46,6 +47,8 @@
       //钉钉鉴权
       dingAuth(data,type){
         resource.dingAuth(data).then(res => {
+          this.$store.commit('setAppId',res.data.data.agentId);
+          this.$store.commit('setCorpId',res.data.data.corpId);
           //钉钉鉴权
           this.ddConfig(res.data.data,type);
         })

@@ -12,8 +12,14 @@
 				<el-input-number v-model="limit_num" @blur="chageNum" :precision="0" :min="1"></el-input-number>
 			</el-form-item>
 			<el-form-item label="会议室设备：">
-				<el-select v-model="selected_equipment" @remove-tag="changeSelect" multiple filterable placeholder="请选择">
-					<div class="ddd pl-6 pr-6">
+				<el-select v-model="selected_equipment" @remove-tag="changeSelect" multiple placeholder="请选择">
+					<div class="ddd pl-6 pr-6 pt-6" slot="empty" v-if="equipment_list.length == 0">
+						<el-input placeholder="请输入设备名称" size="small" v-model="equipment_name">
+							<el-button slot="append" @click="addEquipment">添加</el-button>
+						</el-input>
+						<div class="empty_toast">暂无数据</div>
+					</div>
+					<div class="ddd pl-6 pr-6" v-else>
 						<el-input placeholder="请输入设备名称" size="small" v-model="equipment_name">
 							<el-button slot="append" @click="addEquipment">添加</el-button>
 						</el-input>
@@ -112,7 +118,6 @@
 							this.meeting_address = this.info.meeting_address;
 							this.remark = this.info.remark;
 						}
-						console.log(this.info)
 						equipment_list.map(item => {
 							let selected_equipment = this.selected_equipment.filter(i => {
 								return item.equipment_id == i;
@@ -215,6 +220,13 @@
 }
 </style>
 <style lang="less" scoped>
+.empty_toast{
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	font-size: 14px;
+	color: #999999;
+}
 .delete_small_icon{
 	width: 16px;
 	height: 16px;

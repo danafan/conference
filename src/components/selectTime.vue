@@ -240,7 +240,15 @@
 			//用户信息
 			userInfo(){
 				return this.$store.state.userInfo;
-			}
+			},
+			//appId
+			appId(){
+				return this.$store.state.appId;
+			},
+			//corpId
+			corpId(){
+				return this.$store.state.corpId;
+			},
 		},
 		created(){
 			//设置默认状态
@@ -479,7 +487,7 @@
 				dd.ready(() => {
 					dd.biz.contact.complexPicker({
 				    title:"选择参会人员",            	//标题
-				    corpId:"ding7828fff434921f5b",  //企业的corpId
+				    corpId:this.corpId,  			//企业的corpId
 				    multiple:true,            		//是否多选
 				    limitTips:"超出了",          		//超过限定人数返回提示
 				    maxUsers:1000,            		//最大可选人数
@@ -489,7 +497,7 @@
 				    disabledDepartments:[],        	//不可选部门
 				    requiredUsers:[this.userInfo.user_id],//必选用户（不可取消选中状态）
 				    requiredDepartments:[],        	//必选部门（不可取消选中状态）
-				    appId:2398948762,              	//微应用Id，企业内部应用查看AgentId
+				    appId:this.appId,              	//微应用Id，企业内部应用查看AgentId
 				    permissionType:"GLOBAL",          
 				    responseUserOnly:true,         	//返回人，或者返回人和部门
 				    startWithDepartmentId:0 ,   	//仅支持0和-1
