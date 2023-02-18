@@ -6,7 +6,7 @@
 				<div class="flex-1 flex fc jsb">
 					<!-- 名称 -->
 					<div class="flex ac f20">
-						<div class="mr-8 fw-600">{{info.meeting_room_name}}</div>
+						<div class="mr-8 fw-600">{{type == 3?info.meeting_title:info.meeting_room_name}}</div>
 						<div class="status_tag f14" :class="[{'yyd':info.status == '1'},{'jxz':info.status == '2'},{'yjs':info.status == '3'},,{'yqx':info.status == '4'}]" v-if="meeting_status == '0' && $route.path == '/record'">{{info.status | status}}</div>
 					</div>
 					<!-- 设备 -->
@@ -364,7 +364,7 @@
 							console.log('已连接')
 						}
 
-						this.ws.onmessage =  (evt) => {
+						this.ws.onmessage = (evt) => {
 							let user_info = JSON.parse(evt.data);
 
 							let c_list = this.user_list.filter(item => {

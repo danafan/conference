@@ -4,17 +4,18 @@
 			<img class="logo mr-6" src="../../static/logo.png">
 			<div class="fw-600 f20">德儿智能会议室管理平台</div>
 		</div>
-		<div class="flex-1 flex">
-			<div class="left_menu">
-				<div class="menu_item pointer pt-6 pr-6 pb-6 pl-6" v-for="(item,index) in menu_list" @click="checkMenu(index)">
-					<div class="menu_content flex ac height-100 pl-26" :class="{'active_menu':active_index == index}">
+		<div class="flex-1 flex fc pt-10 pl-24 pb-10 pr-24">
+			<div class="tab_menu flex pl-34 mb-10">
+				<div class="menu_item pointer relative mr-100" v-for="(item,index) in menu_list" @click="checkMenu(index)">
+					<div class="height-100 flex ac jsa">
 						<img class="menu_icon mr-13" :src="item.active_icon" v-if="active_index == index">
 						<img class="menu_icon mr-13" :src="item.icon" v-else>
 						<div class="f20 fw-500" :class="{'primary_color':active_index == index}">{{item.name}}</div>
 					</div>
+					<div class="active_line width-100 absolute bottom-0 left-0" v-if="active_index == index"></div>
 				</div>
 			</div>
-			<div class="flex-1 pt-14 pl-20 pb-14 pr-20">
+			<div class="flex-1">
 				<router-view></router-view>
 			</div>
 		</div>
@@ -103,20 +104,18 @@
 		height: 22px;
 	}
 }
-.left_menu{
-	border-right: 1px solid #E9ECF4;
-	width: 280px;
+.tab_menu{
+	background-color: #ffffff;
+	height: 74px;
 	.menu_item{
-		height: 64px;
-		.menu_content{
-			.menu_icon{
-				width: 20px;
-				height: 21px;
-			}
+		height: 74px;
+		.menu_icon{
+			width: 20px;
+			height: 21px;
 		}
-		.active_menu{
-			background-color: #E8EFFF;
-			border-radius: 8px;
+		.active_line{
+			height: 3px;
+			background: #2A37FD;
 		}
 	}
 	
