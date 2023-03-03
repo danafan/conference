@@ -8,6 +8,7 @@ const list = (resolve) => require(["@/pages/Management/pages/list"], resolve);
 const add = (resolve) => require(["@/pages/Management/pages/add"], resolve);
 const record = (resolve) => require(["@/pages/Record/index"], resolve);
 const statistics = (resolve) => require(["@/pages/Statistics/index"], resolve);
+const authority = (resolve) => require(["@/pages/Authority/index"], resolve);
 
 Vue.use(Router);
 
@@ -46,6 +47,11 @@ const router = new Router({
       path: "/statistics",
       name: "会议统计",
       component: statistics
+    },
+    {
+      path: "/authority",
+      name: "权限管理",
+      component: authority
     },
     ],
   }

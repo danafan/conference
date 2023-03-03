@@ -1,23 +1,17 @@
 <template>
-	<div class="container background_color flex fc">
-		<div class="page_title flex ac pl-18">
-			<img class="logo mr-6" src="../../static/logo.png">
-			<div class="fw-600 f20">德儿智能会议室管理平台</div>
-		</div>
-		<div class="flex-1 flex fc pt-10 pl-24 pb-10 pr-24">
-			<div class="tab_menu flex pl-34 mb-10">
-				<div class="menu_item pointer relative mr-100" v-for="(item,index) in menu_list" @click="checkMenu(index)">
-					<div class="height-100 flex ac jsa">
-						<img class="menu_icon mr-13" :src="item.active_icon" v-if="active_index == index">
-						<img class="menu_icon mr-13" :src="item.icon" v-else>
-						<div class="f20 fw-500" :class="{'primary_color':active_index == index}">{{item.name}}</div>
-					</div>
-					<div class="active_line width-100 absolute bottom-0 left-0" v-if="active_index == index"></div>
+	<div class="container background_color flex fc pt-10 pl-8 pb-10 pr-8">
+		<div class="tab_menu white_back flex pl-34 mb-6">
+			<div class="menu_item pointer relative mr-100" v-for="(item,index) in menu_list" @click="checkMenu(index)">
+				<div class="height-100 flex ac jsa">
+					<img class="menu_icon mr-13" :src="item.active_icon" v-if="active_index == index">
+					<img class="menu_icon mr-13" :src="item.icon" v-else>
+					<div class="f16 bold" :class="{'primary_color':active_index == index}">{{item.name}}</div>
 				</div>
+				<div class="active_line active_background width-100 absolute bottom-0 left-0" v-if="active_index == index"></div>
 			</div>
-			<div class="flex-1">
-				<router-view></router-view>
-			</div>
+		</div>
+		<div class="flex-1">
+			<router-view></router-view>
 		</div>
 	</div>
 </template>
@@ -58,6 +52,11 @@
 					active_icon:require('../../static/hytj_active.png'),
 					name:"会议统计",
 					path:'/statistics'
+				},{
+					icon:require('../../static/authority_icon.png'),
+					active_icon:require('../../static/authority_active.png'),
+					name:"权限管理",
+					path:'/authority'
 				}],							//路由地址
 				active_index:0,				//当前选中的路由下标
 			}
@@ -96,26 +95,16 @@
 	}
 </script>
 <style lang="less" scoped>
-.page_title{
-	border-bottom: 1px solid #E9ECF4;
-	height: 86px;
-	.logo{
-		width: 22px;
-		height: 22px;
-	}
-}
 .tab_menu{
-	background-color: #ffffff;
-	height: 74px;
+	height: 48px;
 	.menu_item{
-		height: 74px;
+		height: 48px;
 		.menu_icon{
-			width: 20px;
-			height: 21px;
+			width: 17px;
+			height: 17px;
 		}
 		.active_line{
-			height: 3px;
-			background: #2A37FD;
+			height: 1px;
 		}
 	}
 	

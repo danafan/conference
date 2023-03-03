@@ -1,6 +1,6 @@
 <template>
 	<div class="flex fc height-100">
-		<el-card class="tab_card" shadow="never">
+		<div class="mb_none white_back pl-30 mb-6 flex ac">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="时间：">
 					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" :clearable="false" :picker-options="pickerOptions" @change="reloadFn">
@@ -15,12 +15,12 @@
 					</el-checkbox-group>
 				</el-form-item>
 			</el-form>
-		</el-card>
+		</div>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
-		<div class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
+		<div class="scroll-y hide_scrollbar" v-if="list.length > 0">
 			<ConferenceItem type="1" :info="item" :current_date="date" v-for="item in list" @reloadFn="reloadFn"/>
 		</div>
-		<EmptyPage class="mt-10" :loading="loading" v-else/>
+		<EmptyPage :loading="loading" v-else/>
 	</div>
 </template>
 <script>
@@ -113,5 +113,7 @@
 	}
 </script>
 <style lang="less" scoped>
-
+.mb_none{
+	height: 48px;
+}
 </style>

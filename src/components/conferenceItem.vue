@@ -1,30 +1,38 @@
 <template>
 	<div>
-		<el-card class="mb-10" shadow="hover">
+		<el-card class="p_none pt-10 pr-10 pb-10 pl-10 mb-6" shadow="hover">
 			<div class="flex">
 				<DefaultImage :info="info"/>
 				<div class="flex-1 flex fc jsb">
 					<!-- 名称 -->
-					<div class="flex ac f20">
-						<div class="mr-8 fw-600">{{type == 3?info.meeting_title:info.meeting_room_name}}</div>
-						<div class="status_tag f14" :class="[{'yyd':info.status == '1'},{'jxz':info.status == '2'},{'yjs':info.status == '3'},,{'yqx':info.status == '4'}]" v-if="meeting_status == '0' && $route.path == '/record'">{{info.status | status}}</div>
+					<div class="flex ac">
+						<div class="f16 mr-8 fw-500">{{type == 3?info.meeting_title:info.meeting_room_name}}</div>
+						<div class="status_tag f12" :class="[{'yyd':info.status == '1'},{'jxz':info.status == '2'},{'yjs':info.status == '3'},,{'yqx':info.status == '4'}]" v-if="meeting_status == '0' && $route.path == '/record'">{{info.status | status}}</div>
 					</div>
 					<!-- 设备 -->
-					<div class="f16" v-if="type == 1 || type == 2">{{info.equipment_str}}</div>
-					<!-- 人数 -->
-					<div class="flex ac" v-if="type == 1 || type == 2">
-						<img class="people_icon mr-6" src="../static/people_icon.png">
-						<div class="f26">{{info.limit_num}}人</div>
-					</div>
+					<div class="f14" v-if="type == 1 || type == 2">{{info.equipment_str}}</div>
 					<!-- 地址 -->
-					<div class="flex ac">
+					<div class="flex ac" v-if="type == 3">
 						<img class="position_icon mr-6" src="../static/position_icon.png">
-						<div class="f26">{{info.meeting_address}}</div>
+						<div class="f14">{{info.meeting_address}}</div>
+					</div>
+					<!-- 人数/地址/时间 -->
+					<div class="flex" v-if="type == 1 || type == 2">
+						<!-- 人数 -->
+						<div class="flex ac mr-20" v-if="type == 1">
+							<img class="people_icon mr-6" src="../static/people_icon.png">
+							<div class="f14">{{info.limit_num}}人</div>
+						</div>
+						<!-- 地址 -->
+						<div class="flex ac mr-20">
+							<img class="position_icon mr-6" src="../static/position_icon.png">
+							<div class="f14">{{info.meeting_address}}</div>
+						</div>
 					</div>
 					<!-- 时间 -->
 					<div class="flex ac" v-if="type == 3">
 						<img class="time_icon mr-6" src="../static/time_icon.png">
-						<div class="f26">{{info.time}}</div>
+						<div class="f14">{{info.time}}</div>
 					</div>
 				</div>
 				<!-- 会议室管理 -->
@@ -508,10 +516,10 @@
 <style lang="less" scoped>
 .status_tag{
 	border-radius: 12px;
-	width: 60px;
+	width: 50px;
 	text-align: center;
-	height: 24px;
-	line-height: 22px;
+	height: 18px;
+	line-height: 18px;
 }
 .yyd{
 	border:1px solid #2A37FD;
@@ -534,16 +542,16 @@
 	color: #999999;
 }
 .people_icon{
-	width: 22px;
-	height: 22px;
-}
-.position_icon{
-	width: 18px;
-	height: 21px;
-}
-.time_icon{
 	width: 18px;
 	height: 18px;
+}
+.position_icon{
+	width: 16px;
+	height: 19px;
+}
+.time_icon{
+	width: 16px;
+	height: 16px;
 }
 .link_icon{
 	width: 17px;

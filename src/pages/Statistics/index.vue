@@ -1,6 +1,6 @@
 <template>
 	<div class="flex fc height-100">
-		<el-card class="tab_card mb-15" shadow="never">
+		<div class="mb_none white_back pl-30 pt-10 pb-10 mb-6 flex ac">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="日期:">
 					<el-date-picker v-model="date" type="daterange" unlink-panels value-format="yyyy-MM-dd" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" @change="handleCurrentChange(1)">
@@ -16,7 +16,7 @@
 					<el-input v-model="search" clearable placeholder="搜索姓名" @change="handleCurrentChange(1)"></el-input>
 				</el-form-item>
 			</el-form>
-		</el-card>
+		</div>
 		<el-card class="flex-1">
 			<el-table size="mini" :data="dataObj.data" tooltip-effect="dark" style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}" v-loading="loading">
 				<el-table-column prop="user_name" label="姓名" align="center">

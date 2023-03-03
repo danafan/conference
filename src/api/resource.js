@@ -21,7 +21,8 @@ let path = {
   meetingDetail:'meeting/detail',                    //获取会议详情
   updateMinutes:'meeting/update_minutes',            //更新会议纪要
   statisticsList:'statistics/list',                  //会议统计
-  meetingCode:'meeting/code',                        //获取签到二维码      
+  meetingCode:'meeting/code',                        //获取签到二维码   
+  userList:'user/list',                              //权限列表
 } 
 export default {
   //判断用户是否登录
@@ -119,5 +120,9 @@ export default {
   //获取签到二维码
   meetingCode(params) {
     return http.get(path.meetingCode, params);
+  },
+  //权限列表
+  userList(params) {
+    return http.get(path.userList, params);
   },
 };

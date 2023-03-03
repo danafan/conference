@@ -1,17 +1,17 @@
 <template>
-	<div class="flex select_box mt-24 mb-24">
+	<div class="flex select_box mb-18 mt-8">
 		<div class="relative item" :class="[{'is_exceed':item.is_exceed},{'pointer':!item.is_exceed && !item.disable},{'is_disable':item.disable},{'active_background':item.is_selected},{'hover_background':item.is_hover && !item.is_selected && frequency > 0}]" @mouseover="changeShow(item,index,true)" @mouseleave="changeShow(item,index,false)" @click="selectedItem(index)" v-for="(item,index) in list" :key="index">
-			<div class="point_start absolute" v-if="index == 0">{{item.point_time}}</div>
-			<div class="point absolute" v-if="index%2 == 1">{{item.point_time}}</div>
+			<div class="point_start absolute f12" v-if="index == 0">{{item.point_time}}</div>
+			<div class="point absolute f12" v-if="index%2 == 1">{{item.point_time}}</div>
 			<!-- 已过期 -->
 			<div class="popover absolute f14" v-if="active_index == index && item.is_exceed">已过期</div>
 			<!-- 被预定 -->
 			<div class="popover absolute f14" v-if="active_index == index && item.disable">已被 <span class="primary_color">{{item.user_name}}</span> 预定</div>
 			<!-- 可选择 -->
 			<div class="popconfirm absolute f14" v-if="start_index == index">
-				<div>{{popconfirm_value}}</div>
-				<div v-if="frequency === 1">(再次点击确认时段)</div>
-				<div class="width-100 flex jfc mt-10">
+				<div class="width-100 ta mt-12">{{popconfirm_value}}</div>
+				<!-- <div v-if="frequency === 1">(再次点击确认时段)</div> -->
+				<div class="width-100 flex jse mt-10 pr-8">
 					<el-button size="mini" @click.stop="cancel">取消</el-button>
 					<el-button size="mini" type="primary" @click.stop="selectedTime">确定</el-button>
 				</div>
@@ -591,14 +591,14 @@
 	.item{
 		border-right: 1px solid #ADADAD;
 		width: 3.125%;
-		height: 36px;
+		height: 20px;
 		.point_start{
-			bottom:-26px;
+			bottom:-22px;
 			left: -6px;
 		}
 		.point{
-			bottom:-26px;
-			right: -7px;
+			bottom:-22px;
+			right: -6px;
 		}
 		.popover{
 			white-space: nowrap;
@@ -615,11 +615,13 @@
 			border-radius: 6px;
 		}
 		.popconfirm{
-			white-space: nowrap;
-			top:-110px;
+			height: 78px;
+			width: 182px;
+
+			// white-space: nowrap;
+			top:-90px;
 			left: 50%;
 			transform: translate(-50%);
-			padding: 12px;
 			background: #FFFFFF;
 			box-shadow: 0px 0px 3px 0px #DADADA;
 			border-radius: 6px;

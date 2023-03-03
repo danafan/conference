@@ -18,6 +18,9 @@
     box-sizing: border-box;
     color:#333333;
   }
+  .white_back{
+    background-color: #ffffff;
+  }
   .absolute{
     position: absolute;
   }
@@ -42,11 +45,11 @@
   .primary_color{
     color: #2A37FD;
   }
-  .dark_color{
-    color: #666666;
-  }
   .active_background{
     background-color: #2A37FD;
+  }
+  .dark_color{
+    color: #666666;
   }
   .border{
     border:1px solid red;
@@ -56,6 +59,9 @@
   }
   .fw-600{
     font-weight: 600;
+  }
+  .f12{
+    font-size: 12px;
   }
   .f14{
     font-size: 14px;
@@ -108,8 +114,14 @@
   .mr-100{
     margin-right: 100px;
   }
+  .mt-8{
+    margin-top: 8px;
+  }
   .mt-10{
     margin-top: 10px;
+  }
+  .mt-12{
+    margin-top: 12px;
   }
   .mt-24{
     margin-top: 24px;
@@ -117,11 +129,23 @@
   .mt-90{
     margin-top: 90px;
   }
+  .mb-6{
+    margin-bottom: 6px;
+  }
+  .mb-8{
+    margin-bottom: 8px;
+  }
   .mb-10{
     margin-bottom: 10px;
   }
+  .mb-14{
+    margin-bottom: 14px;
+  }
   .mb-15{
     margin-bottom: 15px;
+  }
+  .mb-18{
+    margin-bottom: 18px;
   }
   .mb-20{
     margin-bottom: 20px;
@@ -138,8 +162,17 @@
   .pt-14{
     padding-top: 14px;
   }
+  .pt-35{
+    padding-top: 35px;
+  }
   .pr-6{
     padding-right: 6px;
+  }
+  .pr-8{
+    padding-right: 8px;
+  }
+  .pr-10{
+    padding-right: 10px;
   }
   .pr-20{
     padding-right: 20px;
@@ -159,17 +192,29 @@
   .pl-6{
     padding-left: 6px;
   }
+  .pl-8{
+    padding-left: 8px;
+  }
+  .pl-10{
+    padding-left: 8px;
+  }
   .pl-18{
     padding-left: 18px;
   }
   .pl-20{
     padding-left: 20px;
   }
+  .pl-22{
+    padding-left: 22px;
+  }
   .pl-24{
     padding-left: 20px;
   }
   .pl-26{
     padding-left: 26px;
+  }
+  .pl-30{
+    padding-left: 30px;
   }
   .pl-34{
     padding-left: 34px;
@@ -183,6 +228,9 @@
   }
   .width-100{
     width: 100%;
+  }
+  .ta{
+    text-align: center;
   }
   .height-100{
     height: 100%;
@@ -217,6 +265,9 @@
   .jsb{
     justify-content: space-between;
   }
+  .jse{
+    justify-content: flex-end;
+  }
 
   .pre-line{
     white-space: pre-line;
@@ -249,12 +300,17 @@
     border:none!important;
   }
   /*表单元素去掉下填充*/
-  .hide_bottom {
+  /*.hide_bottom {
     padding-bottom: 0px!important;
+  }*/
+
+  /*没有填充的card*/
+  .p_none .el-card__body{
+    padding: 0px!important;
   }
-  /*用作tab和顶部筛选条件的card去掉下填充*/
-  .tab_card .el-card__body{
-    padding-bottom: 0px!important;
+   /*筛选条件只有一行的el-form-item去掉下边距*/
+  .mb_none .el-form-item{
+    margin-bottom: 0px!important;
   }
   .scroll-y{
     flex:1 1 auto;
@@ -265,27 +321,6 @@
 </style>
 </head>
 <body>
-  <noscript>
-    <strong>We're sorry but illustrations doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-  </noscript>
   <div id="app"></div>
-  <!-- <script type="text/javascript">
-    (function () {
-      document.addEventListener('DOMContentLoaded', function () {
-        autoWidth();
-      });
-      //监听屏幕大小改变
-      window.onresize = function(){
-        autoWidth();
-      };
-      //修改适配
-      function autoWidth(){
-        var html = document.documentElement;
-        var windowWidth = parseInt(html.clientWidth);       //html宽度
-        var availwidth = parseInt(screen.availWidth);       //屏幕实际宽度
-        html.style.fontSize = windowWidth /1920 + 'px';
-      } 
-    })();
-  </script> -->
 </body>
 </html>

@@ -1,6 +1,6 @@
 <template>
 	<div class="flex fc height-100">
-		<el-card class="tab_card" shadow="never">
+		<div class="p_none mb_none white_back pl-30 pt-10 pb-10 mb-6 flex ac">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="会议类型：">
 					<el-select v-model="type" placeholder="请选择会议类型" @change="meetingRecord(true)">
@@ -27,7 +27,7 @@
 					</el-checkbox-group>
 				</el-form-item>
 			</el-form>
-		</el-card>
+		</div>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
 		<div v-infinite-scroll="load" class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
 			<ConferenceItem type="3" :info="item" :meeting_status="meeting_status" v-for="item in list" @reload="meetingRecord(true)"/>

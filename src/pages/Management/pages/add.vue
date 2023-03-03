@@ -1,26 +1,26 @@
 <template>
-	<div>
+	<div class="white_back height-100 pt-10">
 		<el-form label-width="150px">
 			<el-form-item label="会议室名称：" required>
-				<el-input style="flex:1" v-model="meeting_room_name" placeholder="请添加会议室名称">
+				<el-input style="flex:1" size="small" v-model="meeting_room_name" placeholder="请添加会议室名称">
 				</el-input>
 			</el-form-item>
 			<el-form-item label="会议室头像：" required>
 				<UploadImage @callbackFn="callbackFn" :img_list="img_list" v-if="!isEdit || is_show"/>
 			</el-form-item>
 			<el-form-item label="容纳人数：" required>
-				<el-input-number v-model="limit_num" @blur="chageNum" :precision="0" :min="1"></el-input-number>
+				<el-input-number size="small" v-model="limit_num" @blur="chageNum" :precision="0" :min="1"></el-input-number>
 			</el-form-item>
 			<el-form-item label="会议室设备：">
-				<el-select v-model="selected_equipment" @remove-tag="changeSelect" multiple placeholder="请选择">
+				<el-select v-model="selected_equipment" size="small" @remove-tag="changeSelect" multiple placeholder="请选择">
 					<div class="ddd pl-6 pr-6 pt-6" slot="empty" v-if="equipment_list.length == 0">
-						<el-input placeholder="请输入设备名称" size="small" v-model="equipment_name">
+						<el-input class="mb-8" placeholder="请输入设备名称" size="small" v-model="equipment_name">
 							<el-button slot="append" @click="addEquipment">添加</el-button>
 						</el-input>
 						<div class="empty_toast">暂无数据</div>
 					</div>
 					<div class="ddd pl-6 pr-6" v-else>
-						<el-input placeholder="请输入设备名称" size="small" v-model="equipment_name">
+						<el-input class="mb-8" placeholder="请输入设备名称" size="small" v-model="equipment_name">
 							<el-button slot="append" @click="addEquipment">添加</el-button>
 						</el-input>
 						<el-option v-for="(item,index) in equipment_list" :key="item.equipment_id" :label="item.equipment_name" :value="item.equipment_id">
@@ -37,15 +37,15 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="会议室地点：" required>
-				<el-input style="flex:1" v-model="meeting_address" placeholder="请添加会议室地点">
+				<el-input style="flex:1" size="small" v-model="meeting_address" placeholder="请添加会议室地点">
 				</el-input>
 			</el-form-item>
 			<el-form-item label="备注：">
-				<el-input type="textarea" :rows="3" placeholder="请输入备注" v-model="remark">
+				<el-input type="textarea" size="small" :rows="3" placeholder="请输入备注" v-model="remark">
 				</el-input>
 			</el-form-item>
 			<el-form-item v-if="!isEdit">
-				<el-button type="primary" @click="confirmFn">保存</el-button>
+				<el-button type="primary" size="small" @click="confirmFn">保存</el-button>
 			</el-form-item>
 		</el-form>
 	</div>
