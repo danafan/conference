@@ -23,6 +23,8 @@ let path = {
   statisticsList:'statistics/list',                  //会议统计
   meetingCode:'meeting/code',                        //获取签到二维码   
   userList:'user/list',                              //权限列表
+  addUser:'user/add',                                //添加用户
+  editUser:'user/edit',                              //编辑用户
 } 
 export default {
   //判断用户是否登录
@@ -124,5 +126,17 @@ export default {
   //权限列表
   userList(params) {
     return http.get(path.userList, params);
+  },
+  //创建用户
+  addUser(params) {
+    return http.post(path.addUser, params);
+  },
+  //编辑用户(get)
+  editUserGet(params) {
+    return http.get(path.editUser, params);
+  },
+  //编辑用户(post)
+  editUserPost(params) {
+    return http.post(path.editUser, params);
   },
 };
