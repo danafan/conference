@@ -25,6 +25,7 @@ let path = {
   userList:'user/list',                              //权限列表
   addUser:'user/add',                                //添加用户
   editUser:'user/edit',                              //编辑用户
+  delUser:'user/del',                                //删除用户
 } 
 export default {
   //判断用户是否登录
@@ -138,5 +139,9 @@ export default {
   //编辑用户(post)
   editUserPost(params) {
     return http.post(path.editUser, params);
+  },
+  //删除用户
+  delUser(params) {
+    return http.post(path.delUser, params);
   },
 };

@@ -25,7 +25,7 @@
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" v-if="scope.row.edit_status == 1" @click="editUser('2',scope.row.user_id)">编辑</el-button>
-						<el-button type="text" size="small" v-if="scope.row.edit_status == 1">删除</el-button>
+						<el-button type="text" size="small" v-if="scope.row.edit_status == 1" @click="delUser(scope.row.user_id)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -133,8 +133,8 @@
 							this.user_name = data.username;		//已选的用户姓名
 							this.pickedUsers.push(user_id);		//已选的用户
 							this.type = data.type;				//是否子管理员
-							this.depts_name = data.dept_names.split(',');	//已选的部门名称
 							this.pickedDepts = data.dept_ids.split(',');	//已选的部门
+							this.depts_name = data.dept_names.split(',');	//已选的部门名称
 							this.$refs.CDialog.show_dialog = true;
 						}else{
 							this.$message.warning(res.data.msg);
@@ -257,6 +257,29 @@
 					}
 
 				}
+			},
+			//点击删除用户
+			delUser(user_id){
+				this.$confirm('确认删除该用户?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					resource.delUser({user_id:user_id}).then(res => {
+						if(res.data.code == 1){
+							this.$message.success(res.data.msg);
+							//获取列表
+							this.userList();
+						}else{
+							this.$message.warning(res.data.msg);
+						}
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '取消删除'
+					});          
+				});
 			}
 		},
 		components:{
