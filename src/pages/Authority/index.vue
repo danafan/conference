@@ -203,17 +203,17 @@
 			//点击选择部门
 			checkDept(){
 				dd.ready(() => {
-					dd.biz.contact.complexPicker({
-					    title:"选择部门",             	 //标题
-					    corpId:this.corpId,              //企业的corpId
-					    multiple:true,                   //是否多选
-					    limitTips:"超出了",               //超过限定人数返回提示
-					    maxDepartments:100,              //最大选择部门数量
-					    pickedDepartments:[],            //已选部门
-					    disabledDepartments:[],          //不可选部门
-					    requiredDepartments:[],          //必选部门（不可取消选中状态）
-					    appId:this.appId,                //微应用的Id
-					    permissionType:"GLOBAL",         //选人权限，目前只有GLOBAL这个参数
+					dd.biz.contact.departmentsPicker({
+					    title:"选择部门",            //标题
+					    corpId:this.corpId,        	//企业的corpId
+					    multiple:true,              //是否多选
+					    limitTips:"超出了",          //超过限定人数返回提示
+					    maxDepartments:1000,        //最大选择部门数量
+					    pickedDepartments:[],       //已选部门
+					    disabledDepartments:[],     //不可选部门
+					    requiredDepartments:[],     //必选部门（不可取消选中状态）
+					    appId:this.appId,           //微应用的Id
+					    permissionType:"GLOBAL",    //选人权限，目前只有GLOBAL这个参数
 					    onSuccess: (result) => {
 					    	let depts = result.departments;
 					    	depts.map(item => {

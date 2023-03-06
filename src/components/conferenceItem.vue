@@ -64,11 +64,15 @@
 		<!-- 会议详情 -->
 		<c-dialog title="会议详情" :footer="false" ref="dDialog">
 			<div class="f16">
-				<div class="fw-500 mb-15">{{detail_info.meeting_title}}</div>
-				<div class="mb-15">{{detail_info.time}}</div>
-				<div class="mb-15">{{detail_info.meeting_room_name}}</div>
-				<div class="mb-15">{{detail_info.admin_name}}（组织人）</div>
-				<div>{{detail_info.meeting_level_name}}</div>
+				<div class="mb-15 flex">
+					<div>会议主题：</div>
+					<div class="fw-500">{{detail_info.meeting_title}}</div>
+				</div>
+				<div class="mb-15">会议时间：{{detail_info.time}}</div>
+				<div class="mb-15">会议地点：{{detail_info.meeting_room_name}}</div>
+				<div class="mb-15">组织人：{{detail_info.admin_name}}</div>
+				<div class="mb-15">会议级别：{{detail_info.meeting_level_name}}</div>
+				<div>参与人：{{cyr_list}}</div>
 				<el-divider></el-divider>
 				<div class="fw-500">会议纪要</div>
 				<!-- 可编辑 -->
@@ -198,6 +202,7 @@
 				meeting_code:"",		//签到二维码地址
 				ws:null,
 				user_list:[],			//所有用户列表
+				cyr_list:'',			//参与人列表
 				current_list:[],		//当前显示的用户列表
 				sign_list:[],			//签到弹窗已签到的用户列表
 				sign_num:0,
@@ -322,6 +327,10 @@
 						this.detail_info = res.data.data;
 						this.detail_info['time'] = filterMeetingTime(this.detail_info.start_time,this.detail_info.end_time);
 						this.active_index = 0;
+						let cyr_list = this.detail_info.user_list.map(item => {
+							return item.user_name
+						})
+						this.cyr_list = cyr_list.join('、');
 						this.signin_list = this.detail_info.user_list.filter(i => {
 							return i.status == '1';
 						})

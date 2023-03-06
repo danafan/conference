@@ -87,6 +87,7 @@
 				<el-option v-for="item in notice_type_list" :label="item.name" :value="item.id">
 				</el-option>
 			</el-select>
+			<el-checkbox style="margin-left: 10px" v-model="is_chat_notice" :true-label="1" :false-label="0">单聊通知参与人</el-checkbox>
 		</el-form-item>
 	</el-form>
 </c-dialog>
@@ -221,6 +222,7 @@
 				startMinTime:"",	//开始时间最小时间
 				endTime:"",
 				pickedUsers:[],		//当前已选中的用户
+				is_chat_notice:1,	//是否单聊通知
 				
 			}
 		},
@@ -558,6 +560,7 @@
 						notice_type:this.notice_type,
 						meeting_level:this.meeting_level,
 						remark:this.remark,
+						is_chat_notice:this.is_chat_notice
 					}
 					let user_ids = this.selected_user.map(item => {
 						return item.emplId
