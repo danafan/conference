@@ -44,7 +44,7 @@
 					<el-button size="small" @click="checkUser" v-else>选择员工<i class="el-icon-arrow-right el-icon--right"></i></el-button>
 				</el-form-item>
 				<el-form-item label="子管理员：">
-					<el-radio-group v-model="type">
+					<el-radio-group v-model="type" @input="checkType">
 						<el-radio :label="1">是</el-radio>
 						<el-radio :label="0">否</el-radio>
 					</el-radio-group>
@@ -53,8 +53,8 @@
 					<el-tag class="mr-6" size="medium" closable v-for="(item,index) in depts_name" @close="deleteDept(index)">
 						{{item}}
 					</el-tag>
-					<el-button size="mini" @click="checkDept">{{button_name}}<i class="el-icon-arrow-right el-icon--right"></i></el-button>
-					<el-checkbox style="margin-left: 10px" v-model="is_all">全部</el-checkbox>
+					<el-button size="mini" @click="checkDept" :disabled="is_all">{{button_name}}<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+					<el-checkbox style="margin-left: 10px" :disabled="type === 1" v-model="is_all">全部</el-checkbox>
 				</el-form-item>
 			</el-form>
 		</c-dialog>
@@ -80,7 +80,7 @@
 				depts_name:[],					//已选的部门名称
 				pickedDepts:[],					//已选的部门
 				button_name:"选择部门",			//选择部门按钮文字
-				is_all:false,					//是否全部部门
+				is_all:true,					//是否全部部门
 			}
 		},
 		computed:{
@@ -113,7 +113,9 @@
 			//获取列表
 			userList(){
 				let arg = {
-					name:this.name
+					name:this.name,
+					page:this.page,
+					pagesize:this.pagesize
 				}
 				this.loading = true;
 				resource.userList(arg).then(res => {
@@ -160,6 +162,10 @@
 					})
 				}
 			},
+			//切换是否子管理员
+			checkType(v){
+				this.is_all = v === 1?true:false;
+			},
 			//创建或编辑选择员工
 			checkUser(){
 				dd.ready(() => {
@@ -169,8 +175,8 @@
 					    multiple:false,            		//是否多选
 					    limitTips:"超出了",          		//超过限定人数返回提示
 					    maxUsers:1,            			//最大可选人数
-					    pickedUsers:[],   				//已选用户
-					    pickedDepartments:this.pickedDepts,          	//已选部门
+					    pickedUsers:this.pickedUsers,   //已选用户
+					    pickedDepartments:[],          	//已选部门
 					    disabledUsers:[],            	//不可选用户
 					    disabledDepartments:[],        	//不可选部门
 					    requiredUsers:[],				//必选用户（不可取消选中状态）
@@ -209,17 +215,21 @@
 					    multiple:true,              //是否多选
 					    limitTips:"超出了",          //超过限定人数返回提示
 					    maxDepartments:1000,        //最大选择部门数量
-					    pickedDepartments:[],       //已选部门
+					    pickedDepartments:this.pickedDepts,       //已选部门
 					    disabledDepartments:[],     //不可选部门
 					    requiredDepartments:[],     //必选部门（不可取消选中状态）
 					    appId:this.appId,           //微应用的Id
 					    permissionType:"GLOBAL",    //选人权限，目前只有GLOBAL这个参数
 					    onSuccess: (result) => {
 					    	let depts = result.departments;
+					    	this.depts_name = [];
+					    	this.pickedDepts = [];
 					    	depts.map(item => {
 					    		this.depts_name.push(item.name);
 					    		this.pickedDepts.push(item.id);
 					    	})
+					    	// this.depts_name = new Set([...depts_name,...this.depts_name]);
+					    	// this.pickedDepts = new Set([...pickedDepts,...this.pickedDepts]);
 					    },
 					    onFail : function(err) {}
 					});
@@ -232,7 +242,7 @@
 			},
 			//关闭创建和编辑
 			closeDialog(){
-				this.is_all = false;
+				this.is_all = true;
 				this.user_name = "";					//已选的用户姓名
 				this.pickedUsers = [];					//已选的用户
 				this.type = 1;							//是否子管理员
@@ -243,7 +253,7 @@
 			confirmFn(){
 				if(this.pickedUsers.length == 0){
 					this.$message.warning('请选择员工！');
-				}else if(this.pickedDepts.length == 0){
+				}else if(!this.is_all && this.pickedDepts.length == 0){
 					this.$message.warning('请选择部门！');
 				}else{
 					let arg = {
