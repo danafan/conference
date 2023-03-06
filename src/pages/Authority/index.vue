@@ -38,7 +38,7 @@
 		<c-dialog title="杭州德儿电子商务有限公司" width="440px" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" confirmText="确定" @confirmFn="confirmFn" @closeDialog="closeDialog" ref="CDialog">
 			<el-form size="small">
 				<el-form-item label="姓名：">
-					<el-tag size="medium" type="info" closable @close="deleteUser" v-if="pickedUsers.length > 0">
+					<el-tag size="medium" type="info" :closable="dialog_type == '1'" @close="deleteUser" v-if="pickedUsers.length > 0">
 						{{user_name}}
 					</el-tag>
 					<el-button size="small" @click="checkUser" v-else>选择员工<i class="el-icon-arrow-right el-icon--right"></i></el-button>
@@ -53,7 +53,8 @@
 					<el-tag class="mr-6" size="medium" closable v-for="(item,index) in depts_name" @close="deleteDept(index)">
 						{{item}}
 					</el-tag>
-					<el-button size="mini" @click="checkDept">选择部门<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+					<el-button size="mini" @click="checkDept">{{button_name}}<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+					<el-checkbox style="margin-left: 10px" v-model="is_all">全部</el-checkbox>
 				</el-form-item>
 			</el-form>
 		</c-dialog>
@@ -78,6 +79,8 @@
 				type:1,							//是否子管理员
 				depts_name:[],					//已选的部门名称
 				pickedDepts:[],					//已选的部门
+				button_name:"选择部门",			//选择部门按钮文字
+				is_all:false,					//是否全部部门
 			}
 		},
 		computed:{
@@ -89,6 +92,18 @@
 			corpId(){
 				return this.$store.state.corpId;
 			},
+		},
+		watch:{
+			//切换是否全部部门
+			is_all:function(n,o){
+				if(n){
+					this.button_name = "全部部门";
+					this.depts_name = [];					//已选的部门名称
+					this.pickedDepts = [];					//已选的部门
+				}else{
+					this.button_name = "选择部门";
+				}
+			}
 		},
 		created(){
 			//获取列表
@@ -133,8 +148,11 @@
 							this.user_name = data.username;		//已选的用户姓名
 							this.pickedUsers.push(user_id);		//已选的用户
 							this.type = data.type;				//是否子管理员
-							this.pickedDepts = data.dept_ids.split(',');	//已选的部门
-							this.depts_name = data.dept_names.split(',');	//已选的部门名称
+							this.is_all = data.dept_ids == '-1';
+							//已选的部门
+							this.pickedDepts = data.dept_ids == '-1'?[]:data.dept_ids.split(',');	
+							//已选的部门名称
+							this.depts_name = data.dept_ids == '-1'?[]:data.dept_names.split(',');	
 							this.$refs.CDialog.show_dialog = true;
 						}else{
 							this.$message.warning(res.data.msg);
@@ -214,6 +232,7 @@
 			},
 			//关闭创建和编辑
 			closeDialog(){
+				this.is_all = false;
 				this.user_name = "";					//已选的用户姓名
 				this.pickedUsers = [];					//已选的用户
 				this.type = 1;							//是否子管理员
@@ -230,7 +249,7 @@
 					let arg = {
 						user_id:this.pickedUsers[0],
 						type:this.type,
-						dept_ids:this.pickedDepts.join(',')
+						dept_ids:this.is_all?'-1':this.pickedDepts.join(',')
 					}
 					if(this.dialog_type == '1'){	//添加
 						resource.addUser(arg).then(res => {
