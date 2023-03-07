@@ -14,7 +14,7 @@
 				</el-form-item>
 				<el-form-item label="部门：">
 					<div class="dept_box" @click="checkDept">
-						<div class="text-overflow">请选择部门</div>
+						<div class="text-overflow">{{dept_ids.length > 0?dept_names:'请选择部门'}}</div>
 						<img class="right_arrow" src="../../static/right_arrow.png">
 					</div>
 				</el-form-item>
@@ -37,7 +37,7 @@
 </template>
 <script>
 	import * as dd from 'dingtalk-jsapi';
-	
+
 	import {getNowDate,getMonthStartDate,getCurrentDate,getLastMonthStartDate,getLastMonthEndDate,filterMeetingTime} from '../../utils.js'
 	import PageTab from '../../components/pageTab.vue'
 	import ConferenceItem from '../../components/conferenceItem.vue'
@@ -156,7 +156,7 @@
 					    	let dept_names = [];
 					    	this.dept_ids = [];
 					    	depts.map(item => {
-					    		this.dept_names.push(item.name);
+					    		dept_names.push(item.name);
 					    		this.dept_ids.push(item.id);
 					    	})
 					    	this.dept_names = dept_names.join(',');
