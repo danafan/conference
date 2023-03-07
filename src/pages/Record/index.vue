@@ -83,7 +83,7 @@
 						}
 					}]
 				},	 							//时间区间
-				date:[getNowDate(),getNowDate()],						//日期
+				date:[getMonthStartDate(),getCurrentDate()],						//日期
 				dept_names:"",
 				dept_ids:[],						//选中的部门
 				meeting_level_list:[],			//会议级别

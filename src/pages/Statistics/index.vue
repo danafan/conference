@@ -67,7 +67,7 @@
 						}
 					}]
 				},	 							//时间区间
-				date:[getNowDate(),getNowDate()],						//日期
+				date:[getMonthStartDate(),getCurrentDate()],						//日期
 				dept_names:"",
 				dept_ids:[],						//选中的部门
 				search:"",						//搜索会议室
