@@ -10,7 +10,6 @@
 			<!-- 可选择 -->
 			<div class="popconfirm absolute f14" v-if="start_index == index">
 				<div class="width-100 ta mt-12">{{popconfirm_value}}</div>
-				<!-- <div v-if="frequency === 1">(再次点击确认时段)</div> -->
 				<div class="width-100 flex jse mt-10 pr-8">
 					<el-button size="mini" @click.stop="cancel">取消</el-button>
 					<el-button size="mini" type="primary" @click.stop="selectedTime">确定</el-button>

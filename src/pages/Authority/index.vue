@@ -228,8 +228,6 @@
 					    		this.depts_name.push(item.name);
 					    		this.pickedDepts.push(item.id);
 					    	})
-					    	// this.depts_name = new Set([...depts_name,...this.depts_name]);
-					    	// this.pickedDepts = new Set([...pickedDepts,...this.pickedDepts]);
 					    },
 					    onFail : function(err) {}
 					});

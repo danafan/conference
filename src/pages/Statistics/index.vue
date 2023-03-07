@@ -7,10 +7,10 @@
 					</el-date-picker>
 				</el-form-item>
 				<el-form-item label="部门：">
-					<el-select v-model="dept_id" clearable multiple filterable collapse-tags placeholder="请选择部门" @change="handleCurrentChange(1)">
-						<el-option v-for="item in dept_list" :key="item.main_dept_id" :label="item.main_dept" :value="item.main_dept_id">
-						</el-option>
-					</el-select>
+					<div class="dept_box" @click="checkDept">
+						<div class="text-overflow">请选择部门请选择部门请选择部门</div>
+						<img class="right_arrow" src="../../static/right_arrow.png">
+					</div>
 				</el-form-item>
 				<el-form-item label="姓名：">
 					<el-input v-model="search" clearable placeholder="搜索姓名" @change="handleCurrentChange(1)"></el-input>
@@ -65,8 +65,8 @@
 					}]
 				},	 							//时间区间
 				date:[getNowDate(),getNowDate()],						//日期
-				dept_list:[],					//部门列表
-				dept_id:[],						//选中的部门
+				dept_names:"",
+				dept_ids:[],						//选中的部门
 				search:"",						//搜索会议室
 				page:1,
 				pagesize:10,
@@ -74,29 +74,68 @@
 				loading:false,
 			}
 		},
+		computed:{
+			//appId
+			appId(){
+				return this.$store.state.appId;
+			},
+			//corpId
+			corpId(){
+				return this.$store.state.corpId;
+			},
+		},
 		created(){
 			//获取部门列表和会议室级别
-			this.ajaxDeptLevel();
+			// this.ajaxDeptLevel();
 			//获取列表
 			this.statisticsList();
 		},
 		methods:{
 			//获取部门列表和会议室级别
-			ajaxDeptLevel(){
-				resource.ajaxDeptLevel().then(res => {
-					if(res.data.code == 1){
-						let data = res.data.data;
-						this.dept_list = data.dept_list;
-					}else{
-						this.$message.warning(res.data.msg);
-					}
+			// ajaxDeptLevel(){
+			// 	resource.ajaxDeptLevel().then(res => {
+			// 		if(res.data.code == 1){
+			// 			let data = res.data.data;
+			// 			this.dept_list = data.dept_list;
+			// 		}else{
+			// 			this.$message.warning(res.data.msg);
+			// 		}
+			// 	})
+			// },
+			//点击选择部门
+			checkDept(){
+				dd.ready(() => {
+					dd.biz.contact.departmentsPicker({
+					    title:"选择部门",            //标题
+					    corpId:this.corpId,        	//企业的corpId
+					    multiple:true,              //是否多选
+					    limitTips:"超出了",          //超过限定人数返回提示
+					    maxDepartments:1000,        //最大选择部门数量
+					    pickedDepartments:this.dept_ids,       //已选部门
+					    disabledDepartments:[],     //不可选部门
+					    requiredDepartments:[],     //必选部门（不可取消选中状态）
+					    appId:this.appId,           //微应用的Id
+					    permissionType:"GLOBAL",    //选人权限，目前只有GLOBAL这个参数
+					    onSuccess: (result) => {
+					    	let depts = result.departments;
+					    	let dept_names = [];
+					    	this.dept_ids = [];
+					    	depts.map(item => {
+					    		this.dept_names.push(item.name);
+					    		this.dept_ids.push(item.id);
+					    	})
+					    	this.dept_names = dept_names.join(',');
+					    	this.meetingRecord(true);
+					    },
+					    onFail : function(err) {}
+					});
 				})
 			},
 			//获取列表
 			statisticsList(){
 				let arg = {
 					username:this.search,
-					dept_id:this.dept_id.join(','),
+					dept_id:this.dept_ids.join(','),
 					start_date:this.date && this.date.length > 0?this.date[0]:"",
 					end_date:this.date && this.date.length > 0?this.date[1]:"",
 					page:this.page,
@@ -128,5 +167,22 @@
 	}
 </script>
 <style lang="less" scoped>
-
+.dept_box{
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 220px;
+	height: 28px;
+	padding: 0 16px;
+	background: #FFFFFF;
+	border-radius: 2px;
+	font-size: 12px;
+	color: #606266;
+	border: 1px solid rgba(0,0,0,0.15);
+	.right_arrow{
+		width: 14px;
+		height: 14px;
+	}
+}
 </style>
