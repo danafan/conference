@@ -9,24 +9,24 @@
 	<script>
 		export default{
 			props:{
-			//图片地址
-			info:{
-				type: Object,
-				default:{}
-			}
-		},
-		computed:{
-			//图片前缀
-			domain(){
-				return this.$store.state.domain;
-			}
-		},
-	}
-</script>
-<style lang="less" scoped>
-.image_box{
-	width: 120px;
-	height: 80px;
+				//图片地址
+				info:{
+					type: Object,
+					default:{}
+				}
+			},
+			computed:{
+				//图片前缀
+				domain(){
+					return this.$store.state.domain;
+				}
+			},
+		}
+	</script>
+	<style lang="less" scoped>
+	.image_box{
+		width: 120px;
+		height: 80px;
 	// background: #E8EFFF;
 	border-radius: 6px;
 	// .default_icon{
