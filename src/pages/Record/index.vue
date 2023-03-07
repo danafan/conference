@@ -15,7 +15,8 @@
 				<el-form-item label="部门：">
 					<div class="dept_box" @click="checkDept">
 						<div class="text-overflow">{{dept_ids.length > 0?dept_names:'请选择部门'}}</div>
-						<img class="right_arrow" src="../../static/right_arrow.png">
+						<i class="el-icon-error" v-if="dept_ids.length > 0" @click.stop="clearDepts"></i>
+						<img class="right_arrow" src="../../static/right_arrow.png" v-else>
 					</div>
 				</el-form-item>
 				<el-form-item label="搜索会议：">
@@ -165,6 +166,11 @@
 					    onFail : function(err) {}
 					});
 				})
+			},
+			//点击清空选中部门
+			clearDepts(){
+				this.dept_names = "";
+				this.dept_ids = [];
 			},
 			//切换导航
 			checkTab(item){
