@@ -8,7 +8,7 @@
 				</el-form-item>
 				<el-form-item label="部门：">
 					<div class="dept_box" @click="checkDept">
-						<div class="text-overflow">请选择部门请选择部门请选择部门</div>
+						<div class="text-overflow">请选择部门</div>
 						<img class="right_arrow" src="../../static/right_arrow.png">
 					</div>
 				</el-form-item>
@@ -34,6 +34,8 @@
 	</div>
 </template>
 <script>
+	import * as dd from 'dingtalk-jsapi';
+
 	import {getNowDate,getMonthStartDate,getCurrentDate,getLastMonthStartDate,getLastMonthEndDate} from '../../utils.js'
 
 	import resource from '../../api/resource.js'
