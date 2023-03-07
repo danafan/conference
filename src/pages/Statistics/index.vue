@@ -37,7 +37,7 @@
 <script>
 	import * as dd from 'dingtalk-jsapi';
 
-	import {getNowDate,getMonthStartDate,getCurrentDate,getLastMonthStartDate,getLastMonthEndDate} from '../../utils.js'
+	import {getNowDate,getMonthStartDate,getLastMonthStartDate,getLastMonthEndDate} from '../../utils.js'
 
 	import resource from '../../api/resource.js'
 	export default{
@@ -48,7 +48,7 @@
 						text: '当月',
 						onClick(picker) {
 							const start = getMonthStartDate();
-							const end = getCurrentDate();
+							const end = getNowDate();
 							picker.$emit('pick', [start, end]);
 						}
 					},{
@@ -67,7 +67,7 @@
 						}
 					}]
 				},	 							//时间区间
-				date:[getMonthStartDate(),getCurrentDate()],						//日期
+				date:[getMonthStartDate(),getNowDate()],						//日期
 				dept_names:"",
 				dept_ids:[],						//选中的部门
 				search:"",						//搜索会议室
