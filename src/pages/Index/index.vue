@@ -5,7 +5,7 @@
 				<div class="height-100 flex ac jsa">
 					<img class="menu_icon mr-13" :src="item.active_icon" v-if="active_index == index">
 					<img class="menu_icon mr-13" :src="item.icon" v-else>
-					<div class="f16 bold" :class="{'primary_color':active_index == index}">{{item.name}}</div>
+					<div class="f16 bold space_nowrap" :class="{'primary_color':active_index == index}">{{item.name}}</div>
 				</div>
 				<div class="active_line active_background width-100 absolute bottom-0 left-0" v-if="active_index == index"></div>
 			</div>
