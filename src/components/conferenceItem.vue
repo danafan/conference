@@ -43,6 +43,7 @@
 				</div>
 				<!-- 会议记录 -->
 				<div class="flex ac" v-if="type == 3">
+					<el-button type="text" @click="editFn(info.meeting_id)" v-if="info.status == 1 && info.is_self == 1">编辑</el-button>
 					<el-button type="text" @click="meetingCode" v-if="info.is_sign">签到</el-button>
 					<el-button type="text" @click="$refs.CDialog.show_dialog = true" v-if="info.cancle_status == 1">取消日程</el-button>
 					<el-button type="text" @click="getDetail">会议详情</el-button>
@@ -50,126 +51,191 @@
 			</div>
 			<SelectTime :info="info" :current_date="current_date" v-if="type == '1'" @reloadFn="$emit('reloadFn')"/>
 		</el-card>
-		<!-- 编辑 -->
-		<c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
-			<Add ref="add" :isEdit="true" :info="edit_info"/>
-		</c-dialog>
-		<!-- 取消日程 -->
-		<c-dialog title="取消日程" width="420px" cancelText="暂不" @cancleFn="$refs.CDialog.show_dialog = false" @confirmFn="confirmCancel" ref="CDialog">
-			<div class="f16">
-				<div class="mb-10">会议室：{{info.meeting_room_name}}</div>
-				<div>时间：{{info.time}}</div>
-			</div>
-		</c-dialog>
-		<!-- 会议详情 -->
-		<c-dialog title="会议详情" :footer="false" ref="dDialog">
-			<div class="f16">
-				<div class="mb-15 flex">
-					<div>会议主题：</div>
-					<div class="fw-500">{{detail_info.meeting_title}}</div>
-				</div>
-				<div class="mb-15">会议时间：{{detail_info.time}}</div>
-				<div class="mb-15">会议地点：{{detail_info.meeting_room_name}}</div>
-				<div class="mb-15">组织人：{{detail_info.admin_name}}</div>
-				<div class="mb-15">会议级别：{{detail_info.meeting_level_name}}</div>
-				<div>参与人：{{cyr_list}}</div>
-				<el-divider></el-divider>
-				<div class="fw-500">会议纪要</div>
-				<!-- 可编辑 -->
-				<div v-if="detail_info.edit_status == 1">
-					<div class="upload_box">
-						<el-button size="mini" type="text">添加附件</el-button>
-						<input type="file" ref="fileUpload" class="upload_file" @change="uploadFile">
-					</div>
-					<div class="flex ac" v-for="(item,index) in detail_info.meeting_files">
-						<img class="link_icon mr-6" src="../static/link_icon.png">
-						<el-button class="f14" size="mini" type="text" @click="downLoad(item)">{{item.split('/')[1]}}</el-button>
-						<el-button size="mini" type="text" @click="deleteFile(index)">删除</el-button>
-					</div>
-					<el-input class="mb-10" type="textarea" :rows="5" placeholder="请输入会议记录" v-model="detail_info.meeting_minutes">
+		<!-- 编辑会议 -->
+		<c-dialog title="杭州德儿电子商务有限公司" @cancleFn="$refs.editDialog.show_dialog = false" confirmText="完成" @confirmFn="editConfirmFn" @closeDialog="$emit('reloadFn')" ref="editDialog">
+			<el-form size="small" label-width="100px">
+				<el-form-item label="会议标题：" required>
+					<el-input style="flex:1" v-model="edit_detail_info.meeting_info.meeting_title" placeholder="请添加会议标题">
 					</el-input>
-					<el-button size="small" type="primary" plain @click="updateMinutes">保存</el-button>
-				</div>
-				<!-- 不可编辑 -->
-				<div class="flex ac mt-10" v-else>
-					<img class="minutes_icon mr-15" src="../static/minutes_icon.png">
-					<el-button size="mini" type="text" @click="$refs.mDialog.show_dialog = true">查看会议纪要</el-button>
-				</div>
-				<el-divider></el-divider>
-				<div class="flex mb-15">
-					<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(item,index)">
-						<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}({{item.id == 1?sign_num:unsign_num}})</div>
-						<div class="active_line absolute bottom-0 width-100" v-if="active_index == index"></div>
-					</div>
-				</div>
-				<div class="flex flex-warp">
-					<div class="flex fc ac mr-20 mb-15" v-for="item in signin_list">
-						<div class="picture fw-500 mb-10">{{item.user_name.split('')[0]}}</div>
-						<div class="f14">{{item.user_name}}</div>
-					</div>
-				</div>
+				</el-form-item>
+				<el-form-item label="会议级别：">
+					<el-select v-model="edit_detail_info.meeting_info.meeting_level">
+						<el-option v-for="item in edit_detail_info.meeting_level" :label="item.meeting_level_name" :value="item.meeting_level_id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="会议日期：">
+					<el-date-picker v-model="edit_detail_info.meeting_info.meeting_day" type="date" disabled value-format="yyyy-MM-dd">
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item label="会议时间：">
+					<div class="flex ac">
+						<el-time-select placeholder="起始时间"
+						v-model="startTime"
+						disabled
+						>
+					</el-time-select>
+					-
+					<el-time-select
+					placeholder="结束时间"
+					v-model="endTime"
+					disabled
+					>
+				</el-time-select>
 			</div>
-			<!-- 会议纪要 -->
-			<c-dialog title="会议纪要" :footer="false" :append="true" ref="mDialog">
-				<div class="f16 fw-500 mb-15">会议记录</div>
-				<div class="pre-line" v-html="detail_info.meeting_minutes" v-if="detail_info.meeting_minutes"></div>
-				<div v-else>暂无内容</div>
-				<el-divider></el-divider>
-				<div class="f16 fw-500 mb-15">会议附件</div>
-				<div v-if="detail_info.meeting_files.length > 0">
-					<div class="minutes_row flex mb-10" v-for="(item,index) in detail_info.meeting_files">
-						<img class="minutes_icon mr-18" src="../static/minutes_icon.png">
-						<div class="flex fc as jsb f14">
-							<div>{{item.split('/')[1]}}</div>
-							<el-button size="mini" type="text" @click="downLoad(item)">下载</el-button>
-						</div>
-					</div>
+		</el-form-item>
+		<el-form-item label="参会人员：">
+			<div class="people_box flex">
+				<div class="flex-1">
+					<el-button type="primary" plain icon="el-icon-plus" @click="checkUser">批量添加</el-button>
+					<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="user.user_id != userInfo.user_id" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
+						{{user.user_name}}
+					</el-tag>
 				</div>
-				<div v-else>暂无上传</div>
-				<el-divider></el-divider>
-				<div class="f16 fw-500 mb-15">会议记录人</div>
-				<div class="f14">{{detail_info.admin_name}}</div>
-			</c-dialog>
-		</c-dialog>
-		<!-- 签到 -->
-		<c-dialog class="sign_dialog" width="540px" title="签到" :footer="false" ref="sDialog" @closeDialog="closeSignDialog">
-			<div class="sign_box flex f16">
-				<!-- 左侧 -->
-				<div class="height-100 left_box flex fc">
-					<div class="qrcode flex ac jc">
-						<img class="qrcode_img" :src="meeting_code">
-					</div>
-					<div class="user_num flex-1 flex ac jsa">
-						<div class="flex fc ac">
-							<div class="mb-20">{{sign_list.length}}</div>
-							<div>已签到</div>
-						</div>
-						<div class="flex fc ac">
-							<div class="mb-20">{{unsign_list.length}}</div>
-							<div>未签到</div>
-						</div>
-					</div>
-				</div>
-				<!-- 右侧 -->
-				<div class="flex-1 flex fc">
-					<div class="sign_tab flex ac jsa">
-						<div class="tab_item relative pointer" v-for="(item,index) in tab_list" @click="signCheckTab(item,index)">
-							<div class="fw-500" :class="{'primary_color':sign_active_index == index}">{{item.name}}</div>
-							<div class="active_line absolute bottom-0 width-100" v-if="sign_active_index == index"></div>
-						</div>
-					</div>
-					<div class="user_list flex-1 scroll-y hide_scrollbar">
-						<div class="user_item flex jsb" v-for="item in current_list">
-							<div class="mr-15">{{item.user_name}}</div>
-							<div v-if="item.status == 1">{{item.sign_in_time}}</div>
-						</div>
-					</div>
-				</div>
+				<div class="f16 dark_color">{{selected_user.length}}人</div>
 			</div>
-		</c-dialog>
+		</el-form-item>
+		<el-form-item label="会议室：">
+			<el-select v-model="edit_detail_info.meeting_info.meeting_room_id" disabled>
+				<el-option v-for="item in edit_detail_info.meeting_room" :label="item.meeting_room_name" :value="item.meeting_room_id">
+				</el-option>
+			</el-select>
+		</el-form-item>
+		<el-form-item label="会议描述：">
+			<el-input type="textarea" :rows="3" placeholder="添加会议描述" v-model="edit_detail_info.meeting_info.remark">
+			</el-input>
+		</el-form-item>
+		<el-form-item label="通知时间：">
+			<el-select v-model="edit_detail_info.meeting_info.notice_type_id">
+				<el-option v-for="item in edit_detail_info.notice_type" :label="item.name" :value="item.id">
+				</el-option>
+			</el-select>
+			<el-checkbox style="margin-left: 10px" v-model="edit_detail_info.meeting_info.is_chat_notice" :true-label="1" :false-label="0">单聊通知参与人</el-checkbox>
+		</el-form-item>
+	</el-form>
+</c-dialog>
+<!-- 编辑会议室 -->
+<c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
+	<Add ref="add" :isEdit="true" :info="edit_info"/>
+</c-dialog>
+<!-- 取消日程 -->
+<c-dialog title="取消日程" width="420px" cancelText="暂不" @cancleFn="$refs.CDialog.show_dialog = false" @confirmFn="confirmCancel" ref="CDialog">
+	<div class="f16">
+		<div class="mb-10">会议室：{{info.meeting_room_name}}</div>
+		<div>时间：{{info.time}}</div>
 	</div>
+</c-dialog>
+<!-- 会议详情 -->
+<c-dialog title="会议详情" :footer="false" ref="dDialog">
+	<div class="f16">
+		<div class="mb-15 flex">
+			<div>会议主题：</div>
+			<div class="fw-500">{{detail_info.meeting_title}}</div>
+		</div>
+		<div class="mb-15">会议时间：{{detail_info.time}}</div>
+		<div class="mb-15">会议地点：{{detail_info.meeting_room_name}}</div>
+		<div class="mb-15">组织人：{{detail_info.admin_name}}</div>
+		<div class="mb-15">会议级别：{{detail_info.meeting_level_name}}</div>
+		<div>参与人：{{cyr_list}}</div>
+		<el-divider></el-divider>
+		<div class="fw-500">会议纪要</div>
+		<!-- 可编辑 -->
+		<div v-if="detail_info.edit_status == 1">
+			<div class="upload_box">
+				<el-button size="mini" type="text">添加附件</el-button>
+				<input type="file" ref="fileUpload" class="upload_file" @change="uploadFile">
+			</div>
+			<div class="flex ac" v-for="(item,index) in detail_info.meeting_files">
+				<img class="link_icon mr-6" src="../static/link_icon.png">
+				<el-button class="f14" size="mini" type="text" @click="downLoad(item)">{{item.split('/')[1]}}</el-button>
+				<el-button size="mini" type="text" @click="deleteFile(index)">删除</el-button>
+			</div>
+			<el-input class="mb-10" type="textarea" :rows="5" placeholder="请输入会议记录" v-model="detail_info.meeting_minutes">
+			</el-input>
+			<el-button size="small" type="primary" plain @click="updateMinutes">保存</el-button>
+		</div>
+		<!-- 不可编辑 -->
+		<div class="flex ac mt-10" v-else>
+			<img class="minutes_icon mr-15" src="../static/minutes_icon.png">
+			<el-button size="mini" type="text" @click="$refs.mDialog.show_dialog = true">查看会议纪要</el-button>
+		</div>
+		<el-divider></el-divider>
+		<div class="flex mb-15">
+			<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(item,index)">
+				<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}({{item.id == 1?sign_num:unsign_num}})</div>
+				<div class="active_line absolute bottom-0 width-100" v-if="active_index == index"></div>
+			</div>
+		</div>
+		<div class="flex flex-warp">
+			<div class="flex fc ac mr-20 mb-15" v-for="item in signin_list">
+				<div class="picture fw-500 mb-10">{{item.user_name.split('')[0]}}</div>
+				<div class="f14">{{item.user_name}}</div>
+			</div>
+		</div>
+	</div>
+	<!-- 会议纪要 -->
+	<c-dialog title="会议纪要" :footer="false" :append="true" ref="mDialog">
+		<div class="f16 fw-500 mb-15">会议记录</div>
+		<div class="pre-line" v-html="detail_info.meeting_minutes" v-if="detail_info.meeting_minutes"></div>
+		<div v-else>暂无内容</div>
+		<el-divider></el-divider>
+		<div class="f16 fw-500 mb-15">会议附件</div>
+		<div v-if="detail_info.meeting_files.length > 0">
+			<div class="minutes_row flex mb-10" v-for="(item,index) in detail_info.meeting_files">
+				<img class="minutes_icon mr-18" src="../static/minutes_icon.png">
+				<div class="flex fc as jsb f14">
+					<div>{{item.split('/')[1]}}</div>
+					<el-button size="mini" type="text" @click="downLoad(item)">下载</el-button>
+				</div>
+			</div>
+		</div>
+		<div v-else>暂无上传</div>
+		<el-divider></el-divider>
+		<div class="f16 fw-500 mb-15">会议记录人</div>
+		<div class="f14">{{detail_info.admin_name}}</div>
+	</c-dialog>
+</c-dialog>
+<!-- 签到 -->
+<c-dialog class="sign_dialog" width="540px" title="签到" :footer="false" ref="sDialog" @closeDialog="closeSignDialog">
+	<div class="sign_box flex f16">
+		<!-- 左侧 -->
+		<div class="height-100 left_box flex fc">
+			<div class="qrcode flex ac jc">
+				<img class="qrcode_img" :src="meeting_code">
+			</div>
+			<div class="user_num flex-1 flex ac jsa">
+				<div class="flex fc ac">
+					<div class="mb-20">{{sign_list.length}}</div>
+					<div>已签到</div>
+				</div>
+				<div class="flex fc ac">
+					<div class="mb-20">{{unsign_list.length}}</div>
+					<div>未签到</div>
+				</div>
+			</div>
+		</div>
+		<!-- 右侧 -->
+		<div class="flex-1 flex fc">
+			<div class="sign_tab flex ac jsa">
+				<div class="tab_item relative pointer" v-for="(item,index) in tab_list" @click="signCheckTab(item,index)">
+					<div class="fw-500" :class="{'primary_color':sign_active_index == index}">{{item.name}}</div>
+					<div class="active_line absolute bottom-0 width-100" v-if="sign_active_index == index"></div>
+				</div>
+			</div>
+			<div class="user_list flex-1 scroll-y hide_scrollbar">
+				<div class="user_item flex jsb" v-for="item in current_list">
+					<div class="mr-15">{{item.user_name}}</div>
+					<div v-if="item.status == 1">{{item.sign_in_time}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</c-dialog>
+</div>
 </template>
 <script>
+	import * as dd from 'dingtalk-jsapi';
+
 	import {filterMeetingTime} from '../utils.js'
 
 	import DefaultImage from '../components/defaultImage.vue'
@@ -207,7 +273,17 @@
 				sign_list:[],			//签到弹窗已签到的用户列表
 				sign_num:0,
 				unsign_list:[],			//签到弹窗未签到的用户列表
-				unsign_num:0
+				unsign_num:0,
+				edit_detail_info:{
+					meeting_info:{},
+					meeting_level:[],
+					meeting_room:[],
+					notice_type:[]
+				},	//编辑会议的详情
+				startTime:"",
+				endTime:"",
+				selected_user:[],
+				pickedUsers:[],			//当前已选中的用户
 			}
 		},
 		props:{
@@ -233,13 +309,118 @@
 			},
 		},
 		computed:{
+			//用户信息
+			userInfo(){
+				return this.$store.state.userInfo;
+			},
 			//图片前缀
 			domain(){
 				return this.$store.state.domain;
-			}
+			},
+			//appId
+			appId(){
+				return this.$store.state.appId;
+			},
+			//corpId
+			corpId(){
+				return this.$store.state.corpId;
+			},
 		},
 		methods:{
-			//点击编辑
+			//点击编辑会议
+			editFn(meeting_id){
+				resource.meetingEditGet({meeting_id:meeting_id}).then(res => {
+					if(res.data.code == 1){
+						this.edit_detail_info = res.data.data;
+						
+						this.startTime = this.edit_detail_info.meeting_info.start_time.split(' ')[1].split(':').splice(0,2).join(':');
+						this.endTime = this.edit_detail_info.meeting_info.end_time.split(' ')[1].split(':').splice(0,2).join(':');
+						this.selected_user = this.edit_detail_info.meeting_info.user_list;
+						this.pickedUsers = this.edit_detail_info.meeting_info.user_list.map(item => {
+							return item.user_id;
+						})
+						this.$refs.editDialog.show_dialog = true;
+					}else{
+						this.$message.warning(res.data.msg);
+					}
+				})
+			},
+			//点击批量选择参会人员
+			checkUser(){
+				dd.ready(() => {
+					dd.biz.contact.complexPicker({
+				    title:"选择参会人员",            	//标题
+				    corpId:this.corpId,  			//企业的corpId
+				    multiple:true,            		//是否多选
+				    limitTips:"超出了",          		//超过限定人数返回提示
+				    maxUsers:1000,            		//最大可选人数
+				    pickedUsers:this.pickedUsers,   //已选用户
+				    pickedDepartments:[],          	//已选部门
+				    disabledUsers:[],            	//不可选用户
+				    disabledDepartments:[],        	//不可选部门
+				    requiredUsers:[this.userInfo.user_id],//必选用户（不可取消选中状态）
+				    requiredDepartments:[],        	//必选部门（不可取消选中状态）
+				    appId:this.appId,              	//微应用Id，企业内部应用查看AgentId
+				    permissionType:"GLOBAL",          
+				    responseUserOnly:true,         	//返回人，或者返回人和部门
+				    startWithDepartmentId:0 ,   	//仅支持0和-1
+				    onSuccess: (result) => {
+				    	//设置当前选中的参会人员
+				    	this.setPickedUsers(result.users)
+				    },
+				    onFail : function(err) {}
+				});
+				})
+			},
+			//关闭选中的人员
+			closeFn(index){
+				this.selected_user.splice(index,1);
+				let pickedUsers = this.selected_user.filter(item => {
+					return item.user_id != this.userInfo.user_id;
+				})
+				this.pickedUsers = pickedUsers.map(item => {
+					return item.user_id;
+				})
+			},
+			//设置当前选中的参会人员
+			setPickedUsers(users){
+				this.selected_user = [];
+				let current_user = {
+					name:this.userInfo.real_name,
+					emplId :this.userInfo.user_id
+				}
+				this.selected_user.push(current_user)
+				this.selected_user = [...this.selected_user,...users];
+
+				let pickedUsers = this.selected_user.filter(item => {
+					return item.user_id != this.userInfo.user_id;
+				})
+				this.pickedUsers = pickedUsers.map(item => {
+					return item.user_id;
+				})
+			},
+			//提交编辑会议
+			editConfirmFn(){
+				let edit_meeting_info = {
+					meeting_id:this.edit_detail_info.meeting_info.meeting_id,
+					meeting_title:this.edit_detail_info.meeting_info.meeting_title,
+					notice_type:this.edit_detail_info.meeting_info.notice_type_id,
+					meeting_level:this.edit_detail_info.meeting_info.meeting_level,
+					remark:this.edit_detail_info.meeting_info.remark,
+					user_ids:this.pickedUsers.join(','),
+					is_chat_notice:this.edit_detail_info.meeting_info.is_chat_notice
+				}
+				resource.meetingEditPost(edit_meeting_info).then(res => {
+					if(res.data.code == 1){
+						this.$message.success(res.data.msg);
+						this.$refs.editDialog.show_dialog = false;
+						this.$emit('reload');
+					}else{
+						this.$message.warning(res.data.msg);
+					}
+				})
+			},
+			//点击编辑会议室
 			editMetting(){
 				resource.editMettingRoomGet({meeting_room_id:this.info.meeting_room_id}).then(res => {
 					if(res.data.code == 1){

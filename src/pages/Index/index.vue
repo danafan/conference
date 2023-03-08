@@ -38,11 +38,6 @@
 					name:"预约会议",
 					path:'/appointment'
 				},{
-					icon:require('../../static/hysgl_icon.png'),
-					active_icon:require('../../static/hysgl_active.png'),
-					name:"会议室管理",
-					path:'/management'
-				},{
 					icon:require('../../static/hyjl_icon.png'),
 					active_icon:require('../../static/hyjl_active.png'),
 					name:"会议记录",
@@ -52,6 +47,11 @@
 					active_icon:require('../../static/hytj_active.png'),
 					name:"会议统计",
 					path:'/statistics'
+				},{
+					icon:require('../../static/hysgl_icon.png'),
+					active_icon:require('../../static/hysgl_active.png'),
+					name:"会议室管理",
+					path:'/management'
 				},{
 					icon:require('../../static/authority_icon.png'),
 					active_icon:require('../../static/authority_active.png'),

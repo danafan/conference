@@ -30,10 +30,14 @@
 			</el-form>
 		</div>
 		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
-		<div v-infinite-scroll="load" class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
-			<ConferenceItem type="3" :info="item" :meeting_status="meeting_status" v-for="item in list" @reload="meetingRecord(true)"/>
+		<div class="mt-10 scroll-y hide_scrollbar" v-if="list.length > 0">
+			<ConferenceItem type="3" :info="item" :meeting_status="meeting_status" v-for="item in list" @reload="meetingRecord"/>
 		</div>
 		<EmptyPage class="mt-10" :loading="loading" v-else/>
+		<div class="page">
+			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-size="pagesize" :pager-count="11" :page-sizes="[5, 10, 15, 20]" layout="total, sizes, prev, pager, next, jumper" :total="total">
+			</el-pagination>
+		</div>
 	</div>
 </template>
 <script>
@@ -83,7 +87,7 @@
 						}
 					}]
 				},	 							//时间区间
-				date:[getMonthStartDate(),getNowDate()],						//日期
+				date:[],						//日期
 				dept_names:"",
 				dept_ids:[],						//选中的部门
 				meeting_level_list:[],			//会议级别
@@ -106,8 +110,8 @@
 				page:1,
 				pagesize:10,
 				list:[],						//会议室列表
-				finished:false,
-				loading:true
+				loading:true,
+				total:0
 			}
 		},
 		computed:{
@@ -205,30 +209,43 @@
 							item['time'] = filterMeetingTime(item.start_time,item.end_time);
 							item['is_sign'] = getNowDate() == item.start_time.split(' ')[0] && item.status != 0
 						})
-						if(is_reload){
-							this.list = data.data;
-						}else{
-							this.list = [...this.list,...data.data];
-						}
+						this.list = data.data;
+						this.total = data.total;
+						// if(is_reload){
+						// 	this.list = data.data;
+						// }else{
+						// 	this.list = [...this.list,...data.data];
+						// }
 						
 						
-						if(this.page == data.last_page){
-							this.finished = true;
-						}else{
-							this.page += 1;
-						}
+						// if(this.page == data.last_page){
+						// 	this.finished = true;
+						// }else{
+						// 	this.page += 1;
+						// }
 					}else{
 						this.$message.warning(res.data.msg);
 					}
 				})
 			},
+			//分页
+			handleSizeChange(val) {
+				this.pagesize = val;
+				//获取列表
+				this.meetingRecord();
+			},
+			handleCurrentChange(val) {
+				this.page = val;
+				//获取列表
+				this.meetingRecord();
+			},
 			//上拉加载
-			load(){
-				if(!this.finished){
-					//获取会议记录
-					this.meetingRecord();
-				}
-			}
+			// load(){
+			// 	if(!this.finished){
+			// 		//获取会议记录
+			// 		this.meetingRecord();
+			// 	}
+			// }
 		},
 		components:{
 			PageTab,
