@@ -52,7 +52,7 @@
 			<SelectTime :info="info" :current_date="current_date" v-if="type == '1'" @reloadFn="$emit('reloadFn')"/>
 		</el-card>
 		<!-- 编辑会议 -->
-		<c-dialog title="杭州德儿电子商务有限公司" @cancleFn="$refs.editDialog.show_dialog = false" confirmText="完成" @confirmFn="editConfirmFn" @closeDialog="$emit('reloadFn')" ref="editDialog">
+		<c-dialog title="编辑会议" @cancleFn="$refs.editDialog.show_dialog = false" confirmText="完成" @confirmFn="editConfirmFn" @closeDialog="$emit('reloadFn')" ref="editDialog">
 			<el-form size="small" label-width="100px">
 				<el-form-item label="会议标题：" required>
 					<el-input style="flex:1" v-model="edit_detail_info.meeting_info.meeting_title" placeholder="请添加会议标题">
@@ -88,8 +88,8 @@
 			<div class="people_box flex">
 				<div class="flex-1">
 					<el-button type="primary" plain icon="el-icon-plus" @click="checkUser">批量添加</el-button>
-					<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="user.user_id != userInfo.user_id" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
-						{{user.user_name}}
+					<el-tag class="mr-10 mb-10" effect="plain" :class="{'ml-10':index == 0}" type='info' :closable="user.emplId != userInfo.user_id" v-for="(user,index) in selected_user" :key="index" @close="closeFn(index)">
+						{{user.name}}
 					</el-tag>
 				</div>
 				<div class="f16 dark_color">{{selected_user.length}}人</div>
@@ -335,7 +335,20 @@
 						
 						this.startTime = this.edit_detail_info.meeting_info.start_time.split(' ')[1].split(':').splice(0,2).join(':');
 						this.endTime = this.edit_detail_info.meeting_info.end_time.split(' ')[1].split(':').splice(0,2).join(':');
-						this.selected_user = this.edit_detail_info.meeting_info.user_list;
+						this.selected_user = [];
+						this.edit_detail_info.meeting_info.user_list.map(item => {
+							let new_user = {
+								name:item.user_name,
+								emplId :item.user_id
+							}
+							this.selected_user.push(new_user);
+						})
+						let current_user = {
+							name:this.userInfo.real_name,
+							emplId :this.userInfo.user_id
+						}
+						this.selected_user.unshift(current_user);
+
 						this.pickedUsers = this.edit_detail_info.meeting_info.user_list.map(item => {
 							return item.user_id;
 						})
@@ -376,27 +389,26 @@
 			closeFn(index){
 				this.selected_user.splice(index,1);
 				let pickedUsers = this.selected_user.filter(item => {
-					return item.user_id != this.userInfo.user_id;
+					return item.emplId != this.userInfo.user_id;
 				})
 				this.pickedUsers = pickedUsers.map(item => {
-					return item.user_id;
+					return item.emplId;
 				})
 			},
 			//设置当前选中的参会人员
 			setPickedUsers(users){
-				this.selected_user = [];
+				this.selected_user = users;
 				let current_user = {
 					name:this.userInfo.real_name,
 					emplId :this.userInfo.user_id
 				}
-				this.selected_user.push(current_user)
-				this.selected_user = [...this.selected_user,...users];
+				this.selected_user.unshift(current_user)
 
 				let pickedUsers = this.selected_user.filter(item => {
-					return item.user_id != this.userInfo.user_id;
+					return item.emplId != this.userInfo.user_id;
 				})
 				this.pickedUsers = pickedUsers.map(item => {
-					return item.user_id;
+					return item.emplId;
 				})
 			},
 			//提交编辑会议
@@ -407,9 +419,12 @@
 					notice_type:this.edit_detail_info.meeting_info.notice_type_id,
 					meeting_level:this.edit_detail_info.meeting_info.meeting_level,
 					remark:this.edit_detail_info.meeting_info.remark,
-					user_ids:this.pickedUsers.join(','),
 					is_chat_notice:this.edit_detail_info.meeting_info.is_chat_notice
 				}
+				let user_ids = this.selected_user.map(item => {
+					return item.emplId
+				})
+				arg['user_ids'] = user_ids.join(',');
 				resource.meetingEditPost(edit_meeting_info).then(res => {
 					if(res.data.code == 1){
 						this.$message.success(res.data.msg);
