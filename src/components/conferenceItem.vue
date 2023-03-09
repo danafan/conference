@@ -424,7 +424,7 @@
 				let user_ids = this.selected_user.map(item => {
 					return item.emplId
 				})
-				arg['user_ids'] = user_ids.join(',');
+				edit_meeting_info['user_ids'] = user_ids.join(',');
 				resource.meetingEditPost(edit_meeting_info).then(res => {
 					if(res.data.code == 1){
 						this.$message.success(res.data.msg);

@@ -6,9 +6,9 @@
 			<!-- 已过期 -->
 			<div class="popover absolute f14" v-if="active_index == index && item.is_exceed">已过期</div>
 			<!-- 被预定 -->
-			<div class="popover absolute f14" :class="[{'fixed_right': index > list.length - 3},{'fixed_center': index < list.length - 2}]" v-if="active_index == index && item.disable">已被 <span class="primary_color">{{item.user_name}}</span> 预定</div>
+			<div class="popover absolute f14" :class="[{'fixed_right': index > list.length - 3},{'fixed_center': index > 2 && index < list.length - 2}]" v-if="active_index == index && item.disable">已被 <span class="primary_color">{{item.user_name}}</span> 预定</div>
 			<!-- 可选择 -->
-			<div class="popconfirm absolute f14" :class="[{'fixed_right': index > list.length - 3},{'fixed_center': index < list.length - 2}]" v-if="start_index == index">
+			<div class="popconfirm absolute f14" :class="[{'fixed_left': index == 0},{'fixed_right': index > list.length - 3},{'fixed_center': index > 2 && index < list.length - 2}]" v-if="start_index == index">
 				<div class="width-100 ta mt-12">{{popconfirm_value}}</div>
 				<div class="width-100 flex jse mt-10 pr-8">
 					<el-button size="mini" @click.stop="cancel">取消</el-button>
@@ -621,6 +621,9 @@
 			background: #FFFFFF;
 			box-shadow: 0px 0px 3px 0px #DADADA;
 			border-radius: 6px;
+		}
+		.fixed_left{
+			left: 0;
 		}
 		.fixed_center{
 			left: 50%;
