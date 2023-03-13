@@ -27,6 +27,7 @@ let path = {
   editUser:'user/edit',                              //编辑用户
   delUser:'user/del',                                //删除用户
   meetingEdit:'/meeting/edit',                       //编辑会议
+  meetingUserExport:'meeting/meeting_user_export',   //参会人员导出
 } 
 export default {
   //判断用户是否登录
@@ -152,5 +153,9 @@ export default {
   //编辑会议
   meetingEditPost(params) {
     return http.post(path.meetingEdit, params);
+  },
+  //参会人员导出
+  meetingUserExport(params) {
+    return http.post(path.meetingUserExport, params);
   },
 };

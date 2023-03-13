@@ -221,6 +221,9 @@
 					<div class="fw-500" :class="{'primary_color':sign_active_index == index}">{{item.name}}</div>
 					<div class="active_line absolute bottom-0 width-100" v-if="sign_active_index == index"></div>
 				</div>
+				<el-tooltip class="item" effect="dark" content="导出" placement="top-end">
+					<i class="el-icon-upload pointer" @click="exportUser"></i>
+				</el-tooltip>
 			</div>
 			<div class="user_list flex-1 scroll-y hide_scrollbar">
 				<div class="user_item flex jsb" v-for="item in current_list">
@@ -236,7 +239,7 @@
 <script>
 	import * as dd from 'dingtalk-jsapi';
 
-	import {filterMeetingTime} from '../utils.js'
+	import {filterMeetingTime,exportPost} from '../utils.js'
 
 	import DefaultImage from '../components/defaultImage.vue'
 	import SelectTime from '../components/selectTime.vue'
@@ -680,6 +683,12 @@
 			//点击下载会议附件
 			downLoad(link){
 				window.open(this.domain  + link);
+			},
+			//点击导出参会人
+			exportUser(){
+				resource.meetingUserExport({meeting_id:this.info.meeting_id}).then(res => {
+					exportPost("\ufeff" + res.data,'参会人列表');
+				})
 			}
 
 		},
