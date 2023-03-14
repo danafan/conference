@@ -37,7 +37,8 @@
 				pickerOptions: {
 					disabledDate(date) {
 						return date.getTime() < Date.now() - 8.64e7;
-					}
+					},
+					firstDayOfWeek:1
 				},
 				search:"",				//搜索会议室
 				equipment_list:[],		//所有设备列表

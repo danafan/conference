@@ -37,6 +37,7 @@
 				</div>
 				<!-- 会议室管理 -->
 				<div class="flex ac" v-if="type == 2">
+					<el-button type="text" @click="getQrCode(info.meeting_room_qcode)">二维码</el-button>
 					<el-button type="text" @click="editMetting">编辑</el-button>
 					<el-button type="text" @click="updateFn(info.status == 1?2:1,info.status == 1?'禁用':'启用')">{{info.status == 1?'禁用':'启用'}}</el-button>
 					<el-button type="text" @click="updateFn(0,'删除')">删除</el-button>
@@ -162,7 +163,7 @@
 		<el-divider></el-divider>
 		<div class="flex mb-15">
 			<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(item,index)">
-				<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}({{item.id == 1?sign_num:unsign_num}})</div>
+				<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}({{item.id == '-1'?total_num:item.id == '1'?sign_num:unsign_num}})</div>
 				<div class="active_line absolute bottom-0 width-100" v-if="active_index == index"></div>
 			</div>
 		</div>
@@ -234,10 +235,19 @@
 		</div>
 	</div>
 </c-dialog>
+<!-- 会议室二维码 -->
+<c-dialog title="会议室二维码" :cancel="false" confirmText="下载" @confirmFn="downQrcode" ref="qrDialog">
+	<div class="width-100 flex fc ac pt-10 pb-10" id="imageWrapper">
+		<div class="meeting_room_name">{{info.meeting_room_name}}</div>
+		<img class="qrcode_url" :src="qrcode_url">
+	</div>
+</c-dialog>
 </div>
 </template>
 <script>
 	import * as dd from 'dingtalk-jsapi';
+
+	import html2Canvas from 'html2canvas'
 
 	import {filterMeetingTime,exportPost} from '../utils.js'
 
@@ -259,6 +269,9 @@
 				},			//获取的详情
 				show_drawer:false,		//会议详情弹窗
 				tab_list:[{
+					name:'全部',
+					id:'-1'
+				},{
 					name:'已签到',
 					id:'1'
 				},{
@@ -268,6 +281,7 @@
 				active_index:0,			//默认选中的导航下标
 				sign_active_index:0,	//签到弹窗的默认下标
 				signin_list:[],			//当前已签到和未签到的用户列表
+				total_num:0,
 				meeting_code:"",		//签到二维码地址
 				ws:null,
 				user_list:[],			//所有用户列表
@@ -287,6 +301,7 @@
 				endTime:"",
 				selected_user:[],
 				pickedUsers:[],			//当前已选中的用户
+				qrcode_url:"",			//会议室二维码图片地址
 			}
 		},
 		props:{
@@ -530,9 +545,9 @@
 							return item.user_name
 						})
 						this.cyr_list = cyr_list.join('、');
-						this.signin_list = this.detail_info.user_list.filter(i => {
-							return i.status == '1';
-						})
+						// 所有人
+						this.signin_list = this.detail_info.user_list;
+						this.total_num = this.signin_list.length;
 						//已签到的人
 						let sign_list = this.detail_info.user_list.filter(item => {
 							return item.status == 1;
@@ -543,6 +558,7 @@
 							return item.status == 0;
 						})
 						this.unsign_num = unsign_list.length;
+
 						this.$refs.dDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
@@ -552,9 +568,13 @@
 			//切换导航
 			checkTab(item,index){
 				this.active_index = index;
-				this.signin_list = this.detail_info.user_list.filter(i => {
-					return i.status == item.id;
-				})
+				if(item.id == '-1'){
+					this.signin_list = this.detail_info.user_list
+				}else{
+					this.signin_list = this.detail_info.user_list.filter(i => {
+						return i.status == item.id;
+					})
+				}
 			},
 			//点击签到
 			meetingCode(){
@@ -688,6 +708,28 @@
 			exportUser(){
 				resource.meetingUserExport({meeting_id:this.info.meeting_id}).then(res => {
 					exportPost("\ufeff" + res.data,'参会人列表');
+				})
+			},
+			//点击展示二维码
+			getQrCode(qrcode_url){
+				this.qrcode_url = qrcode_url;
+				this.$refs.qrDialog.show_dialog = true;
+			},
+			//下载二维码
+			downQrcode(){
+				let dd = document.getElementById('imageWrapper');
+				html2Canvas(dd,{
+					allowTaint: true,  //开启跨域
+					useCORS: true,
+					logging: false,
+					letterRendering: true,
+				}).then(canvas => {
+					const link = document.createElement('a')
+					link.href = canvas.toDataURL()
+					link.setAttribute('download', 'test.png')
+					link.style.display = 'none'
+					document.body.appendChild(link)
+					link.click()
 				})
 			}
 
@@ -833,5 +875,14 @@
 		}
 	}
 }
-
+.qrcode_url{
+	width: 150px;
+	height: 150px;
+}
+.meeting_room_name{
+	margin-bottom: 15px;
+	font-size: 18px;
+	color: #333333;
+	font-weight: bold;
+}
 </style>
