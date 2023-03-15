@@ -30,7 +30,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="会议日期：">
-					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" @change="changeDate" :clearable="false" :picker-options="pickerOptions">
+					<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" @change="changeDate" :clearable="false" :picker-options="checkPickerOptions">
 					</el-date-picker>
 				</el-form-item>
 				<el-form-item label="会议时间：" required>
@@ -82,13 +82,24 @@
 			</el-input>
 		</el-form-item>
 		<el-form-item label="通知时间：">
-			<el-select v-model="notice_type">
+			<el-select v-model="notice_type" multiple>
 				<el-option v-for="item in notice_type_list" :label="item.name" :value="item.id">
 				</el-option>
 			</el-select>
 			<el-checkbox style="margin-left: 10px" v-model="is_chat_notice" :true-label="1" :false-label="0">单聊通知参与人</el-checkbox>
 		</el-form-item>
-	</el-form>
+		<el-form-item label="自定义通知：">
+			<el-date-picker
+			 size="small"
+			v-model="date_time"
+			value-format="yyyy-MM-dd HH:mm"
+			type="datetime"
+			:picker-options="pickerOptions"
+			placeholder="选择日期时间">
+		</el-date-picker>
+		<el-button type="primary" size="small" icon="el-icon-plus" @click="addType">添加</el-button>
+	</el-form-item>
+</el-form>
 </c-dialog>
 </div>
 </template>
@@ -210,9 +221,14 @@
 				meeting_room_ids:[],//选中的会议室
 				remark:"",			//会议描述
 				notice_type_list:[],//时间列表
-				notice_type:"",		//选中的提前通知时间
+				notice_type:[],		//选中的提前通知时间
 				date:"",			//会议日期
 				pickerOptions: {
+					disabledDate: (date)=> {
+						return date.getTime() < Date.now() - 8.64e7 || date.getTime() > new Date(`${this.date}`).getTime();
+					}
+				},					
+				checkPickerOptions: {
 					disabledDate(date) {
 						return date.getTime() < Date.now() - 8.64e7;
 					}
@@ -222,6 +238,7 @@
 				endTime:"",
 				pickedUsers:[],		//当前已选中的用户
 				is_chat_notice:1,	//是否单聊通知
+				date_time:""
 				
 			}
 		},
@@ -458,10 +475,12 @@
 						this.meeting_room_ids = [];
 						this.meeting_room_ids.push(this.info.meeting_room_id);
 						this.notice_type_list = res.data.data.notice_type;
-						let default_arr = this.notice_type_list.filter(item => {
-							return item.default == 1;
+						this.notice_type = [];
+						this.notice_type_list.map(item => {
+							if(item.default == 1){
+								this.notice_type.push(item.id);
+							}
 						})
-						this.notice_type = default_arr[0].id;
 						//获取选中的会议时间
 						let arr = this.list.filter(item => {
 							return item.is_selected;
@@ -504,7 +523,7 @@
 				    startWithDepartmentId:0 ,   	//仅支持0和-1
 				    onSuccess: (result) => {
 				    	//设置当前选中的参会人员
-						this.setPickedUsers(result.users)
+				    	this.setPickedUsers(result.users)
 				    },
 				    onFail : function(err) {}
 				});
@@ -536,7 +555,6 @@
 				this.pickedUsers = pickedUsers.map(item => {
 					return item.emplId;
 				})
-
 			},
 			//弹窗确定
 			confirmFn(){
@@ -550,13 +568,15 @@
 					this.$message.warning('请选择会议开始时间！');
 				}else if(this.endTime == ''){
 					this.$message.warning('请选择会议结束时间！');
+				}else if(this.notice_type.length == 0){
+					this.$message.warning('请选择会议提醒时间！');
 				}else{
 					let arg = {
 						meeting_title:this.meeting_title,
 						meeting_room_ids:this.meeting_room_ids.join(','),
 						start_time:`${this.date} ${this.startTime}:00`,
 						end_time:`${this.date} ${this.endTime}:00`,
-						notice_type:this.notice_type,
+						notice_type:this.notice_type.join(','),
 						meeting_level:this.meeting_level,
 						remark:this.remark,
 						is_chat_notice:this.is_chat_notice
@@ -575,6 +595,35 @@
 							this.$message.warning(res.data.msg);
 						}
 					})
+				}
+			},
+			//点击添加通知类型
+			addType(){
+				if(!this.date_time){
+					this.$message.warning('请选择通知时间!');
+				}else{
+					if(new Date(`${this.date_time}`).getTime() > new Date(`${this.date} ${this.startTime}:00`).getTime()){
+						this.$message.warning('提醒时间不能超过会议开始时间!');
+						return
+
+					}
+
+					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1].split(':').splice(0,2).join(':')}`;
+					let c_i = this.notice_type.findIndex(item => {
+						return item == new_ele
+					})
+					if(c_i > -1){
+						this.$message.warning('该提醒时间已存在!');
+						return
+					}
+
+					let new_type = {
+						id:new_ele,
+						name:new_ele
+					}
+					this.notice_type_list.push(new_type);
+					this.notice_type.push(new_ele);
+					this.date_time = "";
 				}
 			}
 			

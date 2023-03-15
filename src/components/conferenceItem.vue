@@ -107,13 +107,24 @@
 			</el-input>
 		</el-form-item>
 		<el-form-item label="通知时间：">
-			<el-select v-model="edit_detail_info.meeting_info.notice_type_id">
+			<el-select v-model="notice_type_ids" multiple>
 				<el-option v-for="item in edit_detail_info.notice_type" :label="item.name" :value="item.id">
 				</el-option>
 			</el-select>
 			<el-checkbox style="margin-left: 10px" v-model="edit_detail_info.meeting_info.is_chat_notice" :true-label="1" :false-label="0">单聊通知参与人</el-checkbox>
 		</el-form-item>
-	</el-form>
+		<el-form-item label="自定义通知：">
+			<el-date-picker
+			size="small"
+			v-model="date_time"
+			value-format="yyyy-MM-dd HH:mm"
+			type="datetime"
+			:picker-options="pickerOptions"
+			placeholder="选择日期时间">
+		</el-date-picker>
+		<el-button type="primary" size="small" icon="el-icon-plus" @click="addType">添加</el-button>
+	</el-form-item>
+</el-form>
 </c-dialog>
 <!-- 编辑会议室 -->
 <c-dialog title="编辑会议室" @cancleFn="$refs.eDialog.show_dialog = false" @confirmFn="confirmFn" ref="eDialog">
@@ -296,7 +307,14 @@
 					meeting_level:[],
 					meeting_room:[],
 					notice_type:[]
-				},	//编辑会议的详情
+				},						//编辑会议的详情
+				notice_type_ids:[],		//已选中的通知类型
+				date_time:"",
+				pickerOptions: {
+					disabledDate: (date)=> {
+						return date.getTime() < Date.now() - 8.64e7 || date.getTime() > new Date(`${this.edit_detail_info.meeting_info.meeting_day}`).getTime();
+					}
+				},		
 				startTime:"",
 				endTime:"",
 				selected_user:[],
@@ -370,11 +388,57 @@
 						this.pickedUsers = this.edit_detail_info.meeting_info.user_list.map(item => {
 							return item.user_id;
 						})
+
+						//会议通知
+						this.notice_type_ids = [];
+						this.edit_detail_info.meeting_info.notice_type_id.map(item => {
+							if(item.indexOf('-') > -1){
+								let new_type = {
+									id:item,
+									name:item
+								}
+								this.edit_detail_info.notice_type.push(new_type);
+								this.notice_type_ids.push(item);
+							}else{
+								this.notice_type_ids.push(parseInt(item));
+							}
+						})
 						this.$refs.editDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
 				})
+			},
+			//点击添加通知类型
+			addType(){
+				if(!this.date_time){
+					this.$message.warning('请选择通知时间!');
+				}else{
+					if(new Date(`${this.date_time}`).getTime() > new Date(`${this.edit_detail_info.meeting_info.meeting_day} ${this.startTime}:00`).getTime()){
+						this.$message.warning('提醒时间不能超过会议开始时间!');
+						return
+
+					}
+
+					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1].split(':').splice(0,2).join(':')}`;
+					let c_i = this.notice_type_ids.findIndex(item => {
+						return item == new_ele
+					})
+					if(c_i > -1){
+						this.$message.warning('该提醒时间已存在!');
+						return
+					}
+
+					
+					
+					let new_type = {
+						id:new_ele,
+						name:new_ele
+					}
+					this.edit_detail_info.notice_type.push(new_type);
+					this.notice_type_ids.push(new_ele);
+					this.date_time = "";
+				}
 			},
 			//点击批量选择参会人员
 			checkUser(){
@@ -431,10 +495,14 @@
 			},
 			//提交编辑会议
 			editConfirmFn(){
+				if(this.notice_type_ids.length == 0){
+					this.$message.warning('请选择会议提醒时间！');
+					return;
+				}
 				let edit_meeting_info = {
 					meeting_id:this.edit_detail_info.meeting_info.meeting_id,
 					meeting_title:this.edit_detail_info.meeting_info.meeting_title,
-					notice_type:this.edit_detail_info.meeting_info.notice_type_id,
+					notice_type:this.notice_type_ids.join(','),
 					meeting_level:this.edit_detail_info.meeting_info.meeting_level,
 					remark:this.edit_detail_info.meeting_info.remark,
 					is_chat_notice:this.edit_detail_info.meeting_info.is_chat_notice
