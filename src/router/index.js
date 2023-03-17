@@ -3,6 +3,7 @@ import Router from "vue-router";
 
 const index = (resolve) => require(["@/pages/Index/index"], resolve);
 const appointment = (resolve) => require(["@/pages/Appointment/index"], resolve);
+const period = (resolve) => require(["@/pages/Period/index"], resolve);
 const management = (resolve) => require(["@/pages/Management/index"], resolve);
 const list = (resolve) => require(["@/pages/Management/pages/list"], resolve);
 const add = (resolve) => require(["@/pages/Management/pages/add"], resolve);
@@ -23,6 +24,11 @@ const router = new Router({
       path: "/appointment",
       name: "预约会议",
       component: appointment
+    },
+    {
+      path: "/period",
+      name: "周期会议",
+      component: period
     },
     {
       path: "/management",

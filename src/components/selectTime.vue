@@ -90,14 +90,16 @@
 		</el-form-item>
 		<el-form-item label="自定义通知：">
 			<el-date-picker
-			 size="small"
+			size="small"
 			v-model="date_time"
 			value-format="yyyy-MM-dd HH:mm"
+			format="yyyy-MM-dd HH:mm"
 			type="datetime"
+			@focus="focus"
+			@change="addType"
 			:picker-options="pickerOptions"
 			placeholder="选择日期时间">
 		</el-date-picker>
-		<el-button type="primary" size="small" icon="el-icon-plus" @click="addType">添加</el-button>
 	</el-form-item>
 </el-form>
 </c-dialog>
@@ -273,6 +275,13 @@
 			this.filterTime();
 		},
 		methods:{
+			focus(){
+				this.$nextTick(() => {
+					document
+					.getElementsByClassName('el-button--text')[0]
+					.setAttribute('style', 'display:none')
+				})
+			},
 			//设置默认状态
 			filterTime(){
 				if(this.info.meeting_records.length > 0){
@@ -382,7 +391,6 @@
 						}
 					})
 					this.start_index = index;
-					this.show_confirm = true;
 					this.frequency = 1;
 				}else if(this.frequency == 1){	//第二次点击
 					if(this.getNum(index).is_selected == 1 && this.getNum(index).is_exceed == 0 && this.getNum(index).disable == 0){
@@ -605,10 +613,8 @@
 					if(new Date(`${this.date_time}`).getTime() > new Date(`${this.date} ${this.startTime}:00`).getTime()){
 						this.$message.warning('提醒时间不能超过会议开始时间!');
 						return
-
 					}
-
-					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1].split(':').splice(0,2).join(':')}`;
+					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1]}`;
 					let c_i = this.notice_type.findIndex(item => {
 						return item == new_ele
 					})

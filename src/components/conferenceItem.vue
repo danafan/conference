@@ -7,7 +7,8 @@
 					<!-- 名称 -->
 					<div class="flex ac">
 						<div class="f16 mr-8 fw-500">{{type == 3?info.meeting_title:info.meeting_room_name}}</div>
-						<div class="status_tag f12" :class="[{'yyd':info.status == '1'},{'jxz':info.status == '2'},{'yjs':info.status == '3'},,{'yqx':info.status == '4'}]" v-if="meeting_status == '0' && $route.path == '/record'">{{info.status | status}}</div>
+						<div class="status_tag f12" :class="[{'yyd':info.status == '1'},{'jxz':info.status == '2'},{'yjs':info.status == '3'},{'yqx':info.status == '4'}]" v-if="meeting_status == '0' && $route.path == '/record'">{{info.status | status}}</div>
+						<div class="status_tag yjs f12" v-if="info.is_period == '1'">周期会议</div>
 					</div>
 					<!-- 设备 -->
 					<div class="f14" v-if="type == 1 || type == 2">{{info.equipment_str}}</div>
@@ -34,6 +35,11 @@
 						<img class="time_icon mr-6" src="../static/time_icon.png">
 						<div class="f14">{{info.time}}</div>
 					</div>
+					<!-- 组织人/部门 -->
+					<div class="flex ac" v-if="type == 3">
+						<img class="admin_user_icon mr-6" src="../static/admin_user_icon.png">
+						<div class="f14">组织人：{{info.admin_name}}&nbsp&nbsp&nbsp{{info.main_dept}}</div>
+					</div>
 				</div>
 				<!-- 会议室管理 -->
 				<div class="flex ac" v-if="type == 2">
@@ -46,7 +52,7 @@
 				<div class="flex ac" v-if="type == 3">
 					<el-button type="text" @click="editFn(info.meeting_id)" v-if="info.status == 1 && info.is_self == 1">编辑</el-button>
 					<el-button type="text" @click="meetingCode" v-if="info.is_sign">签到</el-button>
-					<el-button type="text" @click="$refs.CDialog.show_dialog = true" v-if="info.cancle_status == 1">取消日程</el-button>
+					<el-button type="text" @click="$refs.CDialog.show_dialog = true" v-if="info.cancle_status == 1 && info.status != 3">取消日程</el-button>
 					<el-button type="text" @click="getDetail">会议详情</el-button>
 				</div>
 			</div>
@@ -118,11 +124,13 @@
 			size="small"
 			v-model="date_time"
 			value-format="yyyy-MM-dd HH:mm"
+			format="yyyy-MM-dd HH:mm"
 			type="datetime"
+			@focus="focus"
+			@change="addType"
 			:picker-options="pickerOptions"
 			placeholder="选择日期时间">
 		</el-date-picker>
-		<el-button type="primary" size="small" icon="el-icon-plus" @click="addType">添加</el-button>
 	</el-form-item>
 </el-form>
 </c-dialog>
@@ -248,9 +256,9 @@
 </c-dialog>
 <!-- 会议室二维码 -->
 <c-dialog title="会议室二维码" :cancel="false" confirmText="下载" @confirmFn="downQrcode" ref="qrDialog">
-	<div class="width-100 flex fc ac pt-10 pb-10" id="imageWrapper">
+	<div class="width-100 flex fc ac pt-10 pb-10">
 		<div class="meeting_room_name">{{info.meeting_room_name}}</div>
-		<img class="qrcode_url" :src="qrcode_url">
+		<img class="qrcode_url" id="imageWrapper" :src="qrcode_url">
 	</div>
 </c-dialog>
 </div>
@@ -363,6 +371,13 @@
 			},
 		},
 		methods:{
+			focus(){
+				this.$nextTick(() => {
+					document
+					.getElementsByClassName('el-button--text')[0]
+					.setAttribute('style', 'display:none')
+				})
+			},
 			//点击编辑会议
 			editFn(meeting_id){
 				resource.meetingEditGet({meeting_id:meeting_id}).then(res => {
@@ -420,7 +435,7 @@
 
 					}
 
-					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1].split(':').splice(0,2).join(':')}`;
+					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1]}`;
 					let c_i = this.notice_type_ids.findIndex(item => {
 						return item == new_ele
 					})
@@ -429,7 +444,7 @@
 						return
 					}
 
-					
+
 					
 					let new_type = {
 						id:new_ele,
@@ -794,7 +809,7 @@
 				}).then(canvas => {
 					const link = document.createElement('a')
 					link.href = canvas.toDataURL()
-					link.setAttribute('download', 'test.png')
+					link.setAttribute('download', `${this.info.meeting_room_name}.png`)
 					link.style.display = 'none'
 					document.body.appendChild(link)
 					link.click()
@@ -839,9 +854,10 @@
 </style>
 <style lang="less" scoped>
 .status_tag{
+	margin-right: 5px;
 	border-radius: 12px;
-	width: 50px;
-	text-align: center;
+	padding-left: 5px;
+	padding-right: 5px;
 	height: 18px;
 	line-height: 18px;
 }
@@ -876,6 +892,10 @@
 .time_icon{
 	width: 16px;
 	height: 16px;
+}
+.admin_user_icon{
+	width: 17px;
+	height: 15px;
 }
 .link_icon{
 	width: 17px;
@@ -944,12 +964,12 @@
 	}
 }
 .qrcode_url{
-	width: 150px;
-	height: 150px;
+	width: 300px;
+	height: 300px;
 }
 .meeting_room_name{
-	margin-bottom: 15px;
-	font-size: 18px;
+	margin-bottom: 30px;
+	font-size: 36px;
 	color: #333333;
 	font-weight: bold;
 }

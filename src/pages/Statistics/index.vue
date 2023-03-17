@@ -18,13 +18,26 @@
 				</el-form-item>
 			</el-form>
 		</div>
+		<PageTab :tab_list="tab_list" @checkTab="checkTab"/>
 		<el-card class="flex-1">
-			<el-table size="mini" :data="dataObj.data" tooltip-effect="dark" style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}" v-loading="loading">
+			<!-- 员工会议列表 -->
+			<el-table size="mini" :data="dataObj.data" tooltip-effect="dark" style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}" v-loading="loading" v-if="metting_type == '1'">
 				<el-table-column prop="user_name" label="姓名" align="center">
 				</el-table-column>
 				<el-table-column prop="organization_num" label="组织会议次数" align="center">
 				</el-table-column>
 				<el-table-column prop="join_num" label="相关会议次数" align="center">
+				</el-table-column>
+			</el-table>
+			<!-- 部门会议列表 -->
+			<el-table size="mini" :data="dataObj.data" tooltip-effect="dark" style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}" v-loading="loading" v-else>
+				<el-table-column prop="main_dept" label="部门" align="center">
+				</el-table-column>
+				<el-table-column prop="num" label="会议次数" align="center">
+				</el-table-column>
+				<el-table-column prop="submit_num" label="会议纪要已提交次数" align="center">
+				</el-table-column>
+				<el-table-column prop="un_submit_num" label="会议纪要未提交次数" align="center">
 				</el-table-column>
 			</el-table>
 			<div class="page">
@@ -40,9 +53,19 @@
 	import {getNowDate,getMonthStartDate,getLastMonthStartDate,getLastMonthEndDate} from '../../utils.js'
 
 	import resource from '../../api/resource.js'
+
+	import PageTab from '../../components/pageTab.vue'
 	export default{
 		data(){
 			return{
+				tab_list:[{
+					name:'员工会议统计',
+					id:'1'
+				},{
+					name:'部门会议统计',
+					id:'2'
+				}],								//导航列表
+				metting_type:'1',				//当前选中的导航类型
 				pickerOptions: {
 					shortcuts: [{
 						text: '当月',
@@ -69,7 +92,7 @@
 				},	 							//时间区间
 				date:[],						//日期
 				dept_names:"",
-				dept_ids:[],						//选中的部门
+				dept_ids:[],					//选中的部门
 				search:"",						//搜索会议室
 				page:1,
 				pagesize:10,
@@ -127,6 +150,15 @@
 				this.dept_ids = [];
 				this.statisticsList();
 			},
+			//切换导航
+			checkTab(item){
+				this.metting_type = item.id;
+				this.page = 1;
+				this.pagesize = 10;
+				this.dataObj = {};						//列表数据
+				//获取列表
+				this.statisticsList()
+			},
 			//获取列表
 			statisticsList(){
 				let arg = {
@@ -138,14 +170,26 @@
 					pagesize:this.pagesize
 				}
 				this.loading = true;
-				resource.statisticsList(arg).then(res => {
-					if(res.data.code == 1){
-						this.loading = false;
-						this.dataObj = res.data.data;
-					}else{
-						this.$message.warning(res.data.msg);
-					}
-				})
+				if(this.metting_type == '1'){	//员工会议统计
+					resource.statisticsList(arg).then(res => {
+						if(res.data.code == 1){
+							this.loading = false;
+							this.dataObj = res.data.data;
+						}else{
+							this.$message.warning(res.data.msg);
+						}
+					})
+				}else{					//部门会议统计
+					resource.statisticsDeptList(arg).then(res => {
+						if(res.data.code == 1){
+							this.loading = false;
+							this.dataObj = res.data.data;
+						}else{
+							this.$message.warning(res.data.msg);
+						}
+					})
+				}
+				
 			},
 			//分页
 			handleSizeChange(val) {
@@ -159,6 +203,9 @@
 				this.statisticsList();
 			},
 			
+		},
+		components:{
+			PageTab
 		}
 	}
 </script>

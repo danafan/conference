@@ -20,7 +20,8 @@ let path = {
   meetingCancle:'meeting/cancle',                    //取消日程
   meetingDetail:'meeting/detail',                    //获取会议详情
   updateMinutes:'meeting/update_minutes',            //更新会议纪要
-  statisticsList:'statistics/list',                  //会议统计
+  statisticsList:'statistics/list',                  //会议统计（员工）
+  statisticsDeptList:'statistics/dept_list',         //会议统计（部门）
   meetingCode:'meeting/code',                        //获取签到二维码   
   userList:'user/list',                              //权限列表
   addUser:'user/add',                                //添加用户
@@ -28,6 +29,9 @@ let path = {
   delUser:'user/del',                                //删除用户
   meetingEdit:'/meeting/edit',                       //编辑会议
   meetingUserExport:'meeting/meeting_user_export',   //参会人员导出
+  periodList:'meeting/period_list',                  //周期会议列表
+  periodAdd:'meeting/period_add',                    //创建批量周期会议
+  periodCancle:'meeting/period_cancle',              //取消周期会议
 } 
 export default {
   //判断用户是否登录
@@ -118,9 +122,13 @@ export default {
   updateMinutes(params) {
     return http.post(path.updateMinutes, params);
   },
-  //会议统计
+  //会议统计(员工)
   statisticsList(params) {
     return http.get(path.statisticsList, params);
+  },
+  //会议统计(部门)
+  statisticsDeptList(params) {
+    return http.get(path.statisticsDeptList, params);
   },
   //获取签到二维码
   meetingCode(params) {
@@ -157,5 +165,17 @@ export default {
   //参会人员导出
   meetingUserExport(params) {
     return http.post(path.meetingUserExport, params);
+  },
+  //周期会议列表
+  periodList(params) {
+    return http.get(path.periodList, params);
+  },
+  //创建批量周期会议
+  periodAdd(params) {
+    return http.post(path.periodAdd, params);
+  },
+  //取消周期会议
+  periodCancle(params) {
+    return http.post(path.periodCancle, params);
   },
 };

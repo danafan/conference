@@ -26,7 +26,7 @@
 	<style lang="less" scoped>
 	.image_box{
 		width: 120px;
-		height: 80px;
+		height: 110px;
 	// background: #E8EFFF;
 	border-radius: 6px;
 	// .default_icon{
