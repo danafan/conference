@@ -820,8 +820,19 @@
 			},
 			//点击下载模版
 			downTemp(){
-				let download_url = `${location.origin}/api/meeting/down_template?meeting_id=${this.info.meeting_id}`;
-				window.open(download_url)
+				dd.ready(() => {
+					dd.biz.util.downloadFile({
+						url: `${location.origin}/api/meeting/down_template?meeting_id=${this.info.meeting_id}`, 
+				    	name: `${this.info.meeting_title}-会议记录模板.docx`, //定义下载文件名字
+				    	onProgress: function(msg){
+				    	},
+				    	onSuccess : (result) => {
+				    		this.$message.success('下载成功')
+				    	},
+				    	onFail : function() {}
+				    })
+				})
+
 			}
 
 		},

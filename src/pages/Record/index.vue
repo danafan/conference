@@ -3,7 +3,7 @@
 		<div class="p_none mb_none white_back pl-30 pt-10 pb-10 mb-6 flex ac">
 			<el-form :inline="true" size="mini">
 				<el-form-item label="会议类型：">
-					<el-select v-model="type" placeholder="请选择会议类型" @change="meetingRecord(true)">
+					<el-select v-model="type" style="width: 130px" placeholder="请选择会议类型" @change="meetingRecord(true)">
 						<el-option v-for="item in type_list" :key="item.id" :label="item.name" :value="item.id">
 						</el-option>
 					</el-select>
@@ -14,13 +14,19 @@
 				</el-form-item>
 				<el-form-item label="部门：">
 					<div class="dept_box" @click="checkDept">
-						<div class="text-overflow">{{dept_ids.length > 0?dept_names:'请选择部门'}}</div>
+						<div class="dept_check text-overflow">{{dept_ids.length > 0?dept_names:'请选择部门'}}</div>
 						<i class="el-icon-error f16" v-if="dept_ids.length > 0" @click.stop="clearDepts"></i>
 						<img class="right_arrow" src="../../static/right_arrow.png" v-else>
 					</div>
 				</el-form-item>
 				<el-form-item label="搜索会议：">
-					<el-input v-model="search" clearable placeholder="搜索会议主题" @change="meetingRecord(true)"></el-input>
+					<el-input v-model="search" style="width: 130px" clearable placeholder="搜索会议主题" @change="meetingRecord(true)"></el-input>
+				</el-form-item>
+				<el-form-item label="会议纪要：">
+					<el-select v-model="filling_status" style="width: 130px" placeholder="请选择" clearable @change="meetingRecord(true)">
+						<el-option label="已填报" :value="1"></el-option>
+						<el-option label="未填报" :value="2"></el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="级别：">
 					<el-checkbox-group v-model="meeting_level" @change="meetingRecord(true)">
@@ -93,6 +99,7 @@
 				meeting_level_list:[],			//会议级别
 				meeting_level:[],				//选中的会议级别
 				search:"",						//搜索会议室
+				filling_status:'',				//会议纪要
 				tab_list:[{
 					name:'全部',
 					id:'0'
@@ -197,6 +204,7 @@
 					start_date:this.date && this.date.length > 0?this.date[0]:"",
 					end_date:this.date && this.date.length > 0?this.date[1]:"",
 					search:this.search,
+					filling_status:this.filling_status,
 					page:this.page,
 					pagesize:this.pagesize
 				}
@@ -211,18 +219,6 @@
 						})
 						this.list = data.data;
 						this.total = data.total;
-						// if(is_reload){
-						// 	this.list = data.data;
-						// }else{
-						// 	this.list = [...this.list,...data.data];
-						// }
-						
-						
-						// if(this.page == data.last_page){
-						// 	this.finished = true;
-						// }else{
-						// 	this.page += 1;
-						// }
 					}else{
 						this.$message.warning(res.data.msg);
 					}
@@ -238,14 +234,7 @@
 				this.page = val;
 				//获取列表
 				this.meetingRecord();
-			},
-			//上拉加载
-			// load(){
-			// 	if(!this.finished){
-			// 		//获取会议记录
-			// 		this.meetingRecord();
-			// 	}
-			// }
+			}
 		},
 		components:{
 			PageTab,
@@ -260,14 +249,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 220px;
+	width: 130px;
 	height: 28px;
 	padding: 0 16px;
 	background: #FFFFFF;
-	border-radius: 2px;
+	border-radius: 3px;
 	font-size: 12px;
-	color: #606266;
 	border: 1px solid rgba(0,0,0,0.15);
+	.dept_check{
+		color: rgba(0,0,0,0.35);
+	}
 	.right_arrow{
 		width: 14px;
 		height: 14px;
