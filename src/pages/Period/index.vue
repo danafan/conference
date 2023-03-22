@@ -26,7 +26,7 @@
 						<div class="f14">组织人：{{item.admin_name}}</div>
 					</div>
 				</div>
-				<el-button type="text" v-if="item.status != '2'" @click="cancelFn(item.batch_id)">取消</el-button>
+				<el-button type="text" v-if="item.status != '2' && item.is_self == 1" @click="cancelFn(item.batch_id)">取消</el-button>
 			</div>
 		</div>
 		<EmptyPage class="mt-10" :loading="loading" v-else/>
@@ -35,7 +35,7 @@
 			</el-pagination>
 		</div>
 		<!-- 确认会议室详情 -->
-		<c-dialog title="杭州德儿电子商务有限公司" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" @closeDialog="closeDialog" confirmText="完成" @confirmFn="confirmFn" ref="CDialog">
+		<c-dialog title="杭州德儿电子商务有限公司" :cancel="false" @cancleFn="$refs.CDialog.show_dialog = false" @closeDialog="closeDialog" confirmText="完成" @confirmFn="confirmFn(1)" ref="CDialog">
 			<el-form size="small" label-width="100px">
 				<el-form-item label="会议标题：" required>
 					<el-input style="flex:1" v-model="meeting_title" placeholder="请添加会议标题">
@@ -111,7 +111,7 @@
 			</el-select>
 			<el-checkbox style="margin-left: 10px" v-model="is_chat_notice" :true-label="1" :false-label="0">单聊通知参与人</el-checkbox>
 		</el-form-item>
-		<el-form-item label="自定义通知：">
+		<!-- <el-form-item label="自定义通知：">
 			<el-date-picker
 			size="small"
 			v-model="date_time"
@@ -123,7 +123,7 @@
 			:picker-options="pickerOptions"
 			placeholder="选择日期时间">
 		</el-date-picker>
-	</el-form-item>
+	</el-form-item> -->
 </el-form>
 </c-dialog>
 </div>
@@ -159,12 +159,12 @@
 				notice_type_list:[],				//时间列表
 				notice_type:[],						//选中的提前通知时间
 				is_chat_notice:1,					//是否单聊通知
-				date_time:"",						//自定义的时间
-				pickerOptions: {
-					disabledDate: (date)=> {
-						return date.getTime() < Date.now() - 8.64e7;
-					}
-				},	
+				// date_time:"",						//自定义的时间
+				// pickerOptions: {
+				// 	disabledDate: (date)=> {
+				// 		return date.getTime() < Date.now() - 8.64e7;
+				// 	}
+				// },	
 				selected_user:[],					//选中的参会人员列表
 				pickedUsers:[],		//当前已选中的用户id(用于展示)
 				week_list:[{
@@ -211,13 +211,13 @@
 			},
 		},
 		methods:{
-			focus(){
-				this.$nextTick(() => {
-					document
-					.getElementsByClassName('el-button--text')[0]
-					.setAttribute('style', 'display:none')
-				})
-			},
+			// focus(){
+			// 	this.$nextTick(() => {
+			// 		document
+			// 		.getElementsByClassName('el-button--text')[0]
+			// 		.setAttribute('style', 'display:none')
+			// 	})
+			// },
 			//获取会议记录
 			periodList(is_reload){
 				if(is_reload){
@@ -283,29 +283,29 @@
 			closeDialog(){
 
 			},
-			//点击添加通知类型
-			addType(){
-				if(!this.date_time){
-					this.$message.warning('请选择通知时间!');
-				}else{
-					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1]}`;
-					let c_i = this.notice_type.findIndex(item => {
-						return item == new_ele
-					})
-					if(c_i > -1){
-						this.$message.warning('该提醒时间已存在!');
-						return
-					}
+			// //点击添加通知类型
+			// addType(){
+			// 	if(!this.date_time){
+			// 		this.$message.warning('请选择通知时间!');
+			// 	}else{
+			// 		let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1]}`;
+			// 		let c_i = this.notice_type.findIndex(item => {
+			// 			return item == new_ele
+			// 		})
+			// 		if(c_i > -1){
+			// 			this.$message.warning('该提醒时间已存在!');
+			// 			return
+			// 		}
 
-					let new_type = {
-						id:new_ele,
-						name:new_ele
-					}
-					this.notice_type_list.push(new_type);
-					this.notice_type.push(new_ele);
-					this.date_time = "";
-				}
-			},
+			// 		let new_type = {
+			// 			id:new_ele,
+			// 			name:new_ele
+			// 		}
+			// 		this.notice_type_list.push(new_type);
+			// 		this.notice_type.push(new_ele);
+			// 		this.date_time = "";
+			// 	}
+			// },
 			//点击批量选择参会人员
 			checkUser(){
 				dd.ready(() => {
@@ -361,7 +361,7 @@
 				})
 			},
 			//确认创建
-			confirmFn(){
+			confirmFn(is_check){
 				if(this.meeting_title == ''){
 					this.$message.warning('请输入会议标题！');
 				}else if(this.startTime == ''){
@@ -388,7 +388,8 @@
 						is_chat_notice:this.is_chat_notice,
 						repeat_days:this.repeat_days.join(','),
 						range_start_date:this.range_start_date,
-						range_end_date:this.range_end_date
+						range_end_date:this.range_end_date,
+						is_check:is_check
 					}
 					let user_ids = this.selected_user.map(item => {
 						return item.emplId
@@ -396,16 +397,38 @@
 					arg['user_ids'] = user_ids.join(',');
 					resource.periodAdd(arg).then(res => {
 						if(res.data.code == 1){
-							this.$message.success(res.data.msg);
-							this.$refs.CDialog.show_dialog = false;
-							//获取会议记录
-							this.periodList(true);
+							if(is_check == 1){		//校验
+								//确认创建
+								this.confirmFn(0);
+							}else{					//正常提交
+								this.$message.success(res.data.msg);
+								this.$refs.CDialog.show_dialog = false;
+								//获取会议记录
+								this.periodList(true);
+							}
+						}else if(res.data.code == 2){
+							this.$confirm(`${res.data.msg}`, '提示', {
+								confirmButtonText: '确定',
+								cancelButtonText: '取消',
+								type: 'warning'
+							}).then(() => {
+								//确认创建
+								this.confirmFn(0);
+							}).catch(() => {
+								this.$message({
+									type: 'info',
+									message: '已取消'
+								});          
+							});
+						}else if(res.data.code == 3){
+							this.$message.warning(res.data.msg);
 						}else{
 							this.$message.warning(res.data.msg);
 						}
 					})
 				}
 			},
+			//
 			//取消
 			cancelFn(batch_id){
 				this.$confirm(`确认取消该周期会议？`, '提示', {

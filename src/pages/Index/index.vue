@@ -27,6 +27,11 @@
 					name:"预约会议",
 					path:'/appointment'
 				},{
+					icon:require('../../static/zqhy_icon.png'),
+					active_icon:require('../../static/zqhy_active.png'),
+					name:"周期会议",
+					path:'/period'
+				},{
 					icon:require('../../static/hyjl_icon.png'),
 					active_icon:require('../../static/hyjl_active.png'),
 					name:"会议记录",
