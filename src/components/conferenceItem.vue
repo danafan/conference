@@ -161,9 +161,12 @@
 		<div class="fw-500">会议纪要</div>
 		<!-- 可编辑 -->
 		<div v-if="detail_info.edit_status == 1">
-			<div class="upload_box">
-				<el-button size="mini" type="text">添加附件</el-button>
-				<input type="file" ref="fileUpload" class="upload_file" @change="uploadFile">
+			<div class="flex mb-10 mt-10">
+				<div class="upload_box">
+					<el-button size="mini" type="text">添加附件</el-button>
+					<input type="file" ref="fileUpload" class="upload_file" @change="uploadFile">
+				</div>
+				<el-button type="info" plain size='mini' @click="downTemp">下载模版</el-button>
 			</div>
 			<div class="flex ac" v-for="(item,index) in detail_info.meeting_files">
 				<img class="link_icon mr-6" src="../static/link_icon.png">
@@ -814,6 +817,11 @@
 					document.body.appendChild(link)
 					link.click()
 				})
+			},
+			//点击下载模版
+			downTemp(){
+				let download_url = `${location.origin}/api/meeting/down_template?meeting_id=${this.info.meeting_id}`;
+				window.open(download_url)
 			}
 
 		},
