@@ -676,7 +676,7 @@
 								this.unsign_list.push(item);
 							}
 						})
-						this.current_list = this.sign_list;
+						this.current_list = this.user_list;
 
 						//创建webscoket链接
 						let websocket_url = data.websocket_url;
@@ -745,7 +745,7 @@
 			//签到弹窗切换导航
 			signCheckTab(item,index){
 				this.sign_active_index = index;
-				this.current_list = index == 0?this.sign_list:this.unsign_list;
+				this.current_list = index == 0?this.user_list:index == 1?this.sign_list:this.unsign_list;
 			},
 			//上传文件
 			uploadFile(){
@@ -781,6 +781,7 @@
 					if(res.data.code == 1){
 						this.$refs.dDialog.show_dialog = false;
 						this.$message.success(res.data.msg);
+						this.$emit('reload');
 					}else{
 						this.$message.warning(res.data.msg);
 					}

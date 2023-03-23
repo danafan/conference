@@ -397,6 +397,7 @@
 					arg['user_ids'] = user_ids.join(',');
 					resource.periodAdd(arg).then(res => {
 						if(res.data.code == 1){
+							console.log(is_check)
 							if(is_check == 1){		//校验
 								//确认创建
 								this.confirmFn(0);
