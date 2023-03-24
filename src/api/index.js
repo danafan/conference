@@ -15,8 +15,8 @@ function startLoading() {
   loading = Loading.service({
     target: '.main',
     lock: true,
-    text: '拼命加载中...',
-    background: 'rgba(255, 255, 255, 0.6)',
+    text: '加载中...',
+    background: '#ffffff',
     spinner: 'el-icon-loading'
   })
   loadingArray.push(loading)
