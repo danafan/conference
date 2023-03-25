@@ -214,7 +214,7 @@
 						this.loading = false;
 						let data = res.data.data;
 						data.data.map(item => {
-							item['time'] = filterMeetingTime(item.start_time,item.end_time);
+							item['time'] = filterMeetingTime(item.start_time,item.end_time,item.week);
 							item['is_sign'] = getNowDate() == item.start_time.split(' ')[0] && item.status != 0
 						})
 						this.list = data.data;

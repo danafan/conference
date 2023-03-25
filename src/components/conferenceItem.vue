@@ -185,11 +185,16 @@
 			<el-button size="mini" type="text" @click="$refs.mDialog.show_dialog = true">查看会议纪要</el-button>
 		</div>
 		<el-divider></el-divider>
-		<div class="flex mb-15">
-			<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(item,index)">
-				<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}({{item.id == '-1'?total_num:item.id == '1'?sign_num:unsign_num}})</div>
-				<div class="active_line absolute bottom-0 width-100" v-if="active_index == index"></div>
+		<div class="flex jsb mb-15">
+			<div class="flex">
+				<div class="tab_item mr-60 relative pointer" v-for="(item,index) in tab_list" @click="checkTab(item,index)">
+					<div class="fw-500" :class="{'primary_color':active_index == index}">{{item.name}}({{item.id == '-1'?total_num:item.id == '1'?sign_num:unsign_num}})</div>
+					<div class="active_line absolute bottom-0 width-100" v-if="active_index == index"></div>
+				</div>
 			</div>
+			<el-tooltip class="item" effect="dark" content="导出" placement="top-end">
+				<i class="el-icon-upload pointer" @click="exportUser"></i>
+			</el-tooltip>
 		</div>
 		<div class="flex flex-warp">
 			<div class="flex fc ac mr-20 mb-15" v-for="item in signin_list">

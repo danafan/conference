@@ -64,12 +64,16 @@ function formatDate(date) {
 
 
 //处理会议时间
-export function filterMeetingTime(start_time,end_time){
+export function filterMeetingTime(start_time,end_time,week){
 	let year_list = start_time.split(' ')[0].split('-');
 	let year = `${year_list[0]}年${year_list[1]}月${year_list[2]}日`;
 	let start = `${start_time.split(' ')[1].split(':')[0]}:${start_time.split(' ')[1].split(':')[1]}`;
 	let end = `${end_time.split(' ')[1].split(':')[0]}:${end_time.split(' ')[1].split(':')[1]}`;
-	return `${year} ${start}~${end}`; 
+	if(week){
+		return `${year}（${week}） ${start}~${end}`; 
+	}else{
+		return `${year} ${start}~${end}`; 
+	}
 }
 
 //导出
