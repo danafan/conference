@@ -721,6 +721,11 @@
 										return item.user_id == c_list[0].user_id;
 									})
 									this.unsign_list.splice(i,1);
+
+									let i_i = this.user_list.findIndex(item => {
+										return item.user_id == c_list[0].user_id;
+									})
+									this.user_list.splice(i_i,1);
 									let new_user = {
 										sign_in_time:user_info.sign_in_time,
 										status: 1,
@@ -728,6 +733,7 @@
 										user_name: user_info.user_name
 									}
 									this.sign_list.unshift(new_user);
+									this.user_list.unshift(new_user);
 									this.$message.success(`【${c_list[0].user_name}】已签到!`)
 								}
 							}
