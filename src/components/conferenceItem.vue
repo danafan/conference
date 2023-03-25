@@ -703,8 +703,7 @@
 								return item.user_id == user_info.user_ding_id;
 							})
 
-							if(c_list.length == 0){
-								// this.$message.warning(`【${user_info.user_name}】不是参会人员!`)
+							if(c_list.length == 0){		//不是参会人员
 								let new_user = {
 									sign_in_time:user_info.sign_in_time,
 									status: 1,
@@ -712,6 +711,7 @@
 									user_name: user_info.user_name
 								}
 								this.sign_list.unshift(new_user);
+								this.user_list.unshift(new_user);
 								this.$message.success(`【${user_info.user_name}】已签到!`)
 							}else{
 								if(c_list[0].status == 1){
