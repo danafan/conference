@@ -170,12 +170,15 @@
 				</div>
 				<el-button type="info" plain size='mini' @click="downTemp">下载模版</el-button>
 			</div>
-			<div class="flex ac" v-for="(item,index) in detail_info.meeting_files">
-				<img class="link_icon mr-6" src="../static/link_icon.png">
-				<el-button class="f14" size="mini" type="text" @click="downLoad(item)">{{item.split('/')[1]}}</el-button>
-				<el-button size="mini" type="text" @click="deleteFile(index)">删除</el-button>
+			<div v-if="detail_info.meeting_files.length > 0">
+				<div class="flex ac" v-for="(item,index) in detail_info.meeting_files">
+					<img class="link_icon mr-6" src="../static/link_icon.png">
+					<el-button class="f14" size="mini" type="text" @click="downLoad(item)">{{item.split('/')[1]}}</el-button>
+					<el-button size="mini" type="text" @click="deleteFile(index)">删除</el-button>
+				</div>
 			</div>
-			<el-input class="mb-10" type="textarea" :rows="5" placeholder="请输入会议记录" v-model="detail_info.meeting_minutes">
+			<div class="f12 red_color mb-10" v-else>请至少添加一个附件</div>
+			<el-input class="mb-10" type="textarea" :rows="5" placeholder="请输入会议记录...(必填)" v-model="detail_info.meeting_minutes">
 			</el-input>
 			<el-button size="small" type="primary" plain @click="updateMinutes">保存</el-button>
 		</div>
@@ -779,6 +782,14 @@
 			},
 			//更新会议纪要
 			updateMinutes(){
+				if(this.detail_info.meeting_files.length == 0){
+					this.$message.warning('至少上传一个附件!');
+					return;
+				}
+				if(!this.detail_info.meeting_minutes){
+					this.$message.warning('请输入会议记录!');
+					return;
+				}
 				let arg = {
 					meeting_id:this.detail_info.meeting_id,
 					meeting_files:this.detail_info.meeting_files.join(','),
