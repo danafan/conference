@@ -218,7 +218,10 @@
 				<img class="minutes_icon mr-18" src="../static/minutes_icon.png">
 				<div class="flex fc as jsb f14">
 					<div>{{item.split('/')[1]}}</div>
-					<el-button size="mini" type="text" @click="downLoad(item)">下载</el-button>
+					<div class="flex">
+						<el-button size="mini" type="text" @click="downLoad(item)">下载</el-button>
+						<el-button size="mini" type="text" @click="viewFile(item)">预览</el-button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -445,7 +448,6 @@
 					if(new Date(`${this.date_time}`).getTime() > new Date(`${this.edit_detail_info.meeting_info.meeting_day} ${this.startTime}:00`).getTime()){
 						this.$message.warning('提醒时间不能超过会议开始时间!');
 						return
-
 					}
 
 					let new_ele = `${this.date_time.split(' ')[0]} ${this.date_time.split(' ')[1]}`;
@@ -814,6 +816,11 @@
 			//点击下载会议附件
 			downLoad(link){
 				window.open(this.domain  + link);
+			},
+			//点击预览会议附件
+			viewFile(link){
+				let view_url = `https://view.officeapps.live.com/op/view.aspx?src=${this.domain  + link}&wdOrigin=BROWSELINK`;
+				window.open(view_url);
 			},
 			//点击导出参会人
 			exportUser(){
