@@ -819,6 +819,7 @@
 			},
 			//点击预览会议附件
 			viewFile(link){
+				console.log(this.domain  + link)
 				let view_url = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(this.domain  + link)}&wdOrigin=BROWSELINK`;
 				window.open(view_url);
 			},
