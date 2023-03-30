@@ -819,7 +819,7 @@
 			},
 			//点击预览会议附件
 			viewFile(link){
-				let view_url = `https://view.officeapps.live.com/op/view.aspx?src=${this.domain  + link}&wdOrigin=BROWSELINK`;
+				let view_url = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(this.domain  + link)}&wdOrigin=BROWSELINK`;
 				window.open(view_url);
 			},
 			//点击导出参会人
