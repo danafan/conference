@@ -40,7 +40,7 @@
 						<img class="admin_user_icon mr-6" src="../static/admin_user_icon.png">
 						<div class="f14">组织人：{{info.admin_name}}&nbsp&nbsp&nbsp{{info.main_dept}}</div>
 						&nbsp&nbsp&nbsp
-						<div class="f14" v-if="info.status != '1'">会议纪要：{{info.filling_status == '1'?'已填写':'未填写'}}</div>
+						<div class="f14" v-if="info.status == '3'">会议纪要：{{info.filling_status == '1'?'已填写':'未填写'}}</div>
 					</div>
 				</div>
 				<!-- 会议室管理 -->
