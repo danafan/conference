@@ -284,7 +284,7 @@
 
 	import html2Canvas from 'html2canvas'
 
-	import {filterMeetingTime,exportPost} from '../utils.js'
+	import {filterMeetingTime,exportPost,getNowDate} from '../utils.js'
 
 	import DefaultImage from '../components/defaultImage.vue'
 	import SelectTime from '../components/selectTime.vue'
@@ -819,14 +819,23 @@
 			},
 			//点击预览会议附件
 			viewFile(link){
-				console.log(this.domain  + link)
 				let view_url = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(this.domain  + link)}&wdOrigin=BROWSELINK`;
 				window.open(view_url);
 			},
 			//点击导出参会人
 			exportUser(){
-				resource.meetingUserExport({meeting_id:this.info.meeting_id}).then(res => {
-					exportPost("\ufeff" + res.data,'参会人列表');
+				let baseURL = `${location.origin}/api/meeting/meeting_user_export?meeting_id=${this.info.meeting_id}`;
+				dd.ready(() => {
+					dd.biz.util.downloadFile({
+						url: baseURL, 
+						name: `参会人列表-${getNowDate()}.xlsx`, 
+						onProgress: function(msg){
+						},
+						onSuccess : (result) => {
+							this.$message.success('导出成功!')
+						},
+						onFail : function() {}
+					})
 				})
 			},
 			//点击展示二维码
