@@ -274,7 +274,7 @@
 <c-dialog title="会议室二维码" :cancel="false" confirmText="下载" @confirmFn="downQrcode" ref="qrDialog">
 	<div class="width-100 flex fc ac pt-10 pb-10">
 		<div class="meeting_room_name">{{info.meeting_room_name}}</div>
-		<img class="qrcode_url" id="imageWrapper" :src="qrcode_url">
+		<img class="qrcode_url" :id="`imageWrapper_${info.meeting_room_name}`" :src="qrcode_url">
 	</div>
 </c-dialog>
 </div>
@@ -845,21 +845,20 @@
 			},
 			//下载二维码
 			downQrcode(){
-				let dd = document.getElementById('imageWrapper');
-				html2Canvas(dd,{
-					allowTaint: true,  //开启跨域
-					useCORS: true,
-					logging: false,
-					letterRendering: true,
-				}).then(canvas => {
-					const link = document.createElement('a')
-					link.href = canvas.toDataURL()
-					link.setAttribute('download', `${this.info.meeting_room_name}.png`)
-					link.style.display = 'none'
-					document.body.appendChild(link)
-					link.click()
+				let image_ele = document.getElementById(`imageWrapper_${this.info.meeting_room_name}`);
+				html2Canvas(image_ele,{
+      				useCORS: true, //  默认值 false 是否尝试使用CORS从服务器加载图像
+      			}).then(canvas => {
+      				const imageurl = canvas.toDataURL('image/png',1.0);
+				    const aLink = document.createElement('a') // 创建a标签
+				    aLink.style.display = 'none'
+				    aLink.href = imageurl
+				    aLink.download = `${this.info.meeting_room_name}.png` // 下载文件名
+				    document.body.appendChild(aLink)
+				    aLink.click()
+				    document.body.removeChild(aLink) // 用完后移除元素
 				})
-			},
+      		},
 			//点击下载模版
 			downTemp(){
 				dd.ready(() => {
@@ -874,9 +873,7 @@
 				    	onFail : function() {}
 				    })
 				})
-
 			}
-
 		},
 		filters:{
 			status(v){
