@@ -16,6 +16,7 @@
 					<div class="flex ac" v-if="type == 3">
 						<img class="position_icon mr-6" src="../static/position_icon.png">
 						<div class="f14">{{info.meeting_address}}</div>
+						<div class="f14 fw-500" v-if="type == 3">（{{info.meeting_room_name}}）</div>
 					</div>
 					<!-- 人数/地址/时间 -->
 					<div class="flex" v-if="type == 1 || type == 2">
