@@ -6,7 +6,7 @@
 				<div class="flex-1 flex fc jsb">
 					<!-- 名称 -->
 					<div class="flex ac">
-						<div class="f16 mr-8 fw-500">{{type == 3?info.meeting_title:info.meeting_room_name}}</div>
+						<div class="f16 mr-8 fw-600">{{type == 3?info.meeting_title:info.meeting_room_name}}</div>
 						<div class="status_tag f12" :class="[{'yyd':info.status == '1'},{'jxz':info.status == '2'},{'yqx':info.status == '3'},{'yqx':info.status == '4'}]" v-if="meeting_status == '0' && $route.path == '/record'">{{info.status | status}}</div>
 						<div class="status_tag yjs f12" v-if="info.is_period == '1'">周期会议</div>
 					</div>

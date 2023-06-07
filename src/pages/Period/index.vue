@@ -158,7 +158,7 @@
 				remark:"",							//会议描述
 				notice_type_list:[],				//时间列表
 				notice_type:[],						//选中的提前通知时间
-				is_chat_notice:1,					//是否单聊通知
+				is_chat_notice:0,					//是否单聊通知
 				// date_time:"",						//自定义的时间
 				// pickerOptions: {
 				// 	disabledDate: (date)=> {
