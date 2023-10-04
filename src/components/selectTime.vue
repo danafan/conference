@@ -329,7 +329,7 @@
 				var now = new Date(); 				//当前日期  
 				var nowYear = now.getYear(); 		//当前年 
 				nowYear += (nowYear < 2000) ? 1900 : 0;
-				var nowMonth = now.getMonth()<10?`0${now.getMonth() + 1}`:now.getMonth() + 1; 		//当前月 
+				var nowMonth = now.getMonth() + 1 < 10?`0${now.getMonth() + 1}`:now.getMonth() + 1; 		//当前月 
 				var nowDay = now.getDate()<10?`0${now.getDate()}`:now.getDate(); 		//当前日 
 				var nowHours = now.getHours();  	//当前小时
 				var nowMinutes = now.getMinutes();  //当前分钟
@@ -344,7 +344,6 @@
 
 				//当前时间是否超出指定的结束时间
 				let is_exceed = new Date(current_time).getTime() > new Date(set_end_time).getTime();
-
 				let arg = {
 					is_exceed:is_exceed,				//是否过期
 					arg_start_time:set_start_time,		//开始时间
